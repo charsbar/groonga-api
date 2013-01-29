@@ -1,0 +1,78 @@
+use strict;
+use warnings;
+use Groonga::API::Test;
+
+Groonga::API::init() and BAIL_OUT;
+
+{ # version
+  my $version = Groonga::API::get_version();
+  ok defined $version, "API version: $version";
+}
+
+{ # command version
+  my $version = Groonga::API::get_default_command_version();
+  ok defined $version, "default command version: $version";
+
+  my $rc = Groonga::API::set_default_command_version($version);
+  is $rc => GRN_SUCCESS, "set default command version";
+}
+
+{ # package
+  my $package = Groonga::API::get_package();
+  ok defined $package, "package: $package";
+}
+
+{ # default encoding
+  my $encoding = Groonga::API::get_default_encoding();
+  ok defined $encoding, "default encoding: $encoding";
+
+  my $rc = Groonga::API::set_default_encoding($encoding);
+  is $rc => GRN_SUCCESS, "set default encoding";
+}
+
+{ # match escalation threshold
+  my $threshold = Groonga::API::get_default_match_escalation_threshold();
+  ok defined $threshold, "default match escalation threshold: $threshold";
+  my $rc = Groonga::API::set_default_match_escalation_threshold($threshold);
+  is $rc => GRN_SUCCESS, "set default match escalation threshold";
+}
+
+{ # plugins dir
+  my $dir = Groonga::API::plugin_get_system_plugins_dir();
+  ok defined $dir, "system plugins dir: $dir";
+}
+
+{ # plugin suffix
+  my $suffix = Groonga::API::plugin_get_suffix();
+  ok defined $suffix, "plugin suffix: $suffix";
+}
+
+{ # log level
+  my $level = Groonga::API::default_logger_get_max_level();
+  ok defined $level, "default logger max level: $level";
+
+  Groonga::API::default_logger_set_max_level($level);
+}
+
+{ # query logger flags
+  my $flags = Groonga::API::default_query_logger_get_flags();
+  ok defined $flags, "default query logger flags: $flags";
+
+  Groonga::API::default_query_logger_set_flags($flags);
+}
+
+{ # signal handlers
+  my $rc = Groonga::API::set_int_handler();
+  is $rc => GRN_SUCCESS, "set int handler";
+
+  $rc = Groonga::API::set_term_handler();
+  is $rc => GRN_SUCCESS, "set term handler";
+
+  $rc = Groonga::API::set_segv_handler();
+  is $rc => GRN_SUCCESS, "set segv handler";
+
+}
+
+Groonga::API::fin();
+
+done_testing;
