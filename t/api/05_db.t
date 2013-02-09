@@ -20,7 +20,6 @@ ctx_test(sub {
   ok defined $db_, "opened db";
   is ref $db_ => "Groonga::API::obj", "correct object";
   my $pt_ = $$db_;
-  isnt $pt_ => $pt, "different pointer";
 
   my $db_c = Groonga::API::ctx_db($ctx);
   ok defined $db_c, "context db";
