@@ -213,7 +213,7 @@ sub extract_apis {
     qw/obj_check obj_clear_lock obj_columns obj_db obj_defrag obj_delete_by_id obj_expire obj_get_range obj_get_value obj_id obj_is_builtin obj_is_locked obj_lock obj_name obj_open obj_path obj_path_by_id obj_reinit obj_remove obj_rename obj_set_value obj_unlock/,
 
     # TODO: array
-    qw/array_create array_open array_close array_cursor_close array_cursor_next array_cursor_open array_cursor_set_value array_get_value array_next array_set_value/,
+    qw/array_create array_open array_close array_cursor_close array_cursor_next array_cursor_open array_cursor_set_value array_get_value array_next array_set_value array_push array_pull/,
 
     # TODO: bulk
     qw/bulk_fin bulk_reinit bulk_reserve bulk_resize bulk_space bulk_truncate bulk_write bulk_write_from/,
@@ -405,7 +405,6 @@ sub extract_apis {
   my %map = (
     'grn_ctx *' => 'T_GRN_CTX',
     'grn_obj *' => 'T_GRN_OBJ',
-    grn_bool => 'T_U_CHAR',
   );
   my %grn_extra = (
     'grn_db_create_optarg *' => 'T_GRN_IGNORE',
@@ -416,6 +415,7 @@ sub extract_apis {
     'grn_hash *' => 'T_GRN_OBJ',
     'const grn_logger_info *' => 'T_GRN_LOGGER_INFO',
     grn_id => 'T_U_INT',
+    grn_bool => 'T_U_CHAR',
   );
   my %extra = (
     'long long int' => 'T_IV',
