@@ -3,6 +3,7 @@ use warnings;
 use FindBin;
 use File::Path;
 use Test::More;
+use Test::Differences;
 use Ploonga;
 
 my $tmpdir = "$FindBin::Bin/../tmp";
@@ -30,7 +31,7 @@ my $ploonga = Ploonga->new(
 {
   my $rows = $ploonga->do('select --table Site');
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         0
@@ -57,7 +58,7 @@ my $ploonga = Ploonga->new(
 {
   my $rows = $ploonga->do('select --table Site');
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         0
@@ -101,7 +102,7 @@ JSON
 {
   my $rows = $ploonga->do('select --table Site');
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9
@@ -172,7 +173,7 @@ JSON
 {
   my $rows = $ploonga->do('select --table Site --query _id:1');
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         1
@@ -203,7 +204,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --query '_key:"http://example.org/"'});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         1
@@ -244,7 +245,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --query title:@this});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         1
@@ -275,7 +276,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --match_columns title --query this});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         1
@@ -306,7 +307,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --output_columns _key,title,_score --query title:@test});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9
@@ -377,7 +378,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --offset 0 --limit 3});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9
@@ -418,7 +419,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --offset 3 --limit 3});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9
@@ -459,7 +460,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --offset 7 --limit 3});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9
@@ -495,7 +496,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --sortby -_id});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9
@@ -566,7 +567,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --query title:@test --output_columns _id,_score,title --sortby -_score});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9
@@ -637,7 +638,7 @@ JSON
 {
   my $rows = $ploonga->do(q{select --table Site --query title:@test --output_columns _id,_score,title --sortby -_score,_id});
   ok $rows, "select table";
-  is_deeply $rows => [
+  eq_or_diff $rows => [
     [
       [
         9

@@ -24,6 +24,7 @@ my %params = (
     'Exporter'            => 0,
     'JSON::XS'            => 0,
     'Path::Extended'      => 0,
+    'Test::Differences'   => 0,
     'Test::More'          => '0.88',
     'Test::UseAllModules' => '0.10',
   },
