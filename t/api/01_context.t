@@ -8,8 +8,13 @@ grn_test(sub { # open/close
   is ref $ctx => "Groonga::API::ctx", "proper class";
   ok $$ctx, "context has some address: $$ctx";
 
-  my $rc = Groonga::API::ctx_close($ctx);
-  is $rc => GRN_SUCCESS, "closed context";
+  if (Groonga::API::get_default_command_version() > 1) {
+    my $rc = Groonga::API::ctx_close($ctx);
+    is $rc => GRN_SUCCESS, "closed context";
+  } else {
+    my $rc = Groonga::API::ctx_fin($ctx);
+    is $rc => GRN_SUCCESS, "closed context";
+  }
 });
 
 grn_test(sub { # init/fin

@@ -18,23 +18,26 @@ table_test(sub {
   is $len => bytes::length($name), "length: $len";
   is substr($buf, 0, $len) => $name, "correct name";
 
-  my $new_name = "my_new_col";
-  my $rc = Groonga::API::column_rename($ctx, $column, $new_name, bytes::length($new_name));
-  is $rc => GRN_SUCCESS, "renamed column";
-
-  my $new_len = Groonga::API::column_name($ctx, $column, $buf, bytes::length($buf));
-  is $new_len => bytes::length($new_name), "length: $new_len";
-  is substr($buf, 0, $new_len) => $new_name, "correct new name";
-
   my $table_ = Groonga::API::column_table($ctx, $column);
   ok defined $table_, "found column table";
   is $$table_ => $$table, "correct pointer";
 
-  my $column_ = Groonga::API::obj_column($ctx, $table, $new_name, bytes::length($new_name));
-  ok defined $column_, "found obj column";
-  is $$column_ => $$column, "same pointer";
+  if (Groonga::API::get_default_command_version() > 1) {
+    my $new_name = "my_new_col";
+    my $rc = Groonga::API::column_rename($ctx, $column, $new_name, bytes::length($new_name));
+    is $rc => GRN_SUCCESS, "renamed column";
 
-  Groonga::API::obj_unlink($ctx, $column_) if $column_;
+    my $new_len = Groonga::API::column_name($ctx, $column, $buf, bytes::length($buf));
+    is $new_len => bytes::length($new_name), "length: $new_len";
+    is substr($buf, 0, $new_len) => $new_name, "correct new name";
+
+    my $column_ = Groonga::API::obj_column($ctx, $table, $new_name, bytes::length($new_name));
+    ok defined $column_, "found obj column";
+    is $$column_ => $$column, "same pointer";
+
+    Groonga::API::obj_unlink($ctx, $column_) if $column_;
+  }
+
   Groonga::API::obj_unlink($ctx, $column) if $column;
 });
 

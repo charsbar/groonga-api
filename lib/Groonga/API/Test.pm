@@ -62,14 +62,20 @@ sub ctx_test {
   my ($test, %opts) = @_;
 
   grn_test(sub {
-    Groonga::API::default_logger_set_max_level(GRN_LOG_DUMP);
+    if (Groonga::API::get_default_command_version() > 1) {
+      Groonga::API::default_logger_set_max_level(GRN_LOG_DUMP);
+    }
 
     my $ctx = Groonga::API::ctx_open(GRN_CTX_USE_QL);
     if ($ctx and ref $ctx eq "Groonga::API::ctx") {
       eval { $test->($ctx) };
       diag $@ if $@;
 
-      Groonga::API::ctx_close($ctx);
+      if (Groonga::API::get_default_command_version() > 1) {
+        Groonga::API::ctx_close($ctx);
+      } else {
+        Groonga::API::ctx_fin($ctx);
+      }
     }
     else {
       fail "failed to prepare a context";

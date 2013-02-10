@@ -21,9 +21,11 @@ db_test(sub {
   ok $pt_, "pointer: $pt_";
   is $pt_ => $pt, "same pointer";
 
-  my $new_name = "my_new_table";
-  my $rc = Groonga::API::table_rename($ctx, $table, $new_name, bytes::length($new_name));
-  is $rc => GRN_SUCCESS, "renamed";
+  if (Groonga::API::get_default_command_version() > 1) {
+    my $new_name = "my_new_table";
+    my $rc = Groonga::API::table_rename($ctx, $table, $new_name, bytes::length($new_name));
+    is $rc => GRN_SUCCESS, "renamed";
+  }
 
   Groonga::API::obj_unlink($ctx, $table_) if $table_;
   Groonga::API::obj_unlink($ctx, $table) if $table;

@@ -353,6 +353,9 @@ sub extract_apis {
     # obsolete
     qw/text_otoj/,
 
+    # removed or changed (1.x.x)
+    qw/query_rest query_scan query_snip logger_put logger_pass/,
+
   ); # end of %todo
 
   my %inout = (
