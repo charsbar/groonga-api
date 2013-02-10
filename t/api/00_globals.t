@@ -37,24 +37,24 @@ Groonga::API::init() and BAIL_OUT;
   is $rc => GRN_SUCCESS, "set default match escalation threshold";
 }
 
-if (Groonga::API::get_default_command_version() > 1) { # plugins dir
+if (Groonga::API::get_major_version() > 1) { # plugins dir
   my $dir = Groonga::API::plugin_get_system_plugins_dir();
   ok defined $dir, "system plugins dir: $dir";
 }
 
-if (Groonga::API::get_default_command_version() > 1) { # plugin suffix
+if (Groonga::API::get_major_version() > 1) { # plugin suffix
   my $suffix = Groonga::API::plugin_get_suffix();
   ok defined $suffix, "plugin suffix: $suffix";
 }
 
-if (Groonga::API::get_default_command_version() > 1) { # log level
+if (Groonga::API::get_major_version() > 1) { # log level
   my $level = Groonga::API::default_logger_get_max_level();
   ok defined $level, "default logger max level: $level";
 
   Groonga::API::default_logger_set_max_level($level);
 }
 
-if (Groonga::API::get_default_command_version() > 1) { # query logger flags
+if (Groonga::API::get_major_version() > 1) { # query logger flags
   my $flags = Groonga::API::default_query_logger_get_flags();
   ok defined $flags, "default query logger flags: $flags";
 

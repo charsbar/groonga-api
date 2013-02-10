@@ -22,7 +22,7 @@ table_test(sub {
   ok defined $table_, "found column table";
   is $$table_ => $$table, "correct pointer";
 
-  if (Groonga::API::get_default_command_version() > 1) {
+  if (Groonga::API::get_major_version() > 1) {
     my $new_name = "my_new_col";
     my $rc = Groonga::API::column_rename($ctx, $column, $new_name, bytes::length($new_name));
     is $rc => GRN_SUCCESS, "renamed column";

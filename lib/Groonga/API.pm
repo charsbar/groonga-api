@@ -8,6 +8,11 @@ our $VERSION = '0.01';
 
 XSLoader::load(__PACKAGE__, $VERSION);
 
+our $GRN_VERSION = get_version();
+our $GRN_MAJOR_VERSION = (split /\./, $GRN_VERSION)[0];
+
+sub get_major_version { $GRN_MAJOR_VERSION }
+
 1;
 
 __END__

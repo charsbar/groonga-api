@@ -78,7 +78,7 @@ sub DESTROY {
     if (my $db = $self->{_db}) {
       Groonga::API::obj_unlink($ctx, $db);
     }
-    if (Groonga::API::get_default_command_version() > 1) {
+    if (Groonga::API::get_major_version() > 1) {
       Groonga::API::ctx_close($ctx);
     } else {
       Groonga::API::ctx_fin($ctx);

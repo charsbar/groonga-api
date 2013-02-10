@@ -354,7 +354,7 @@ sub extract_apis {
     qw/text_otoj/,
 
     # removed or changed (1.x.x)
-    qw/query_rest query_scan query_snip logger_put logger_pass/,
+    qw/query_rest query_scan query_snip/,
 
   ); # end of %todo
 

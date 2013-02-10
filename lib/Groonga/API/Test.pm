@@ -62,7 +62,7 @@ sub ctx_test {
   my ($test, %opts) = @_;
 
   grn_test(sub {
-    if (Groonga::API::get_default_command_version() > 1) {
+    if (Groonga::API::get_major_version() > 1) {
       Groonga::API::default_logger_set_max_level(GRN_LOG_DUMP);
     }
 
@@ -71,7 +71,7 @@ sub ctx_test {
       eval { $test->($ctx) };
       diag $@ if $@;
 
-      if (Groonga::API::get_default_command_version() > 1) {
+      if (Groonga::API::get_major_version() > 1) {
         Groonga::API::ctx_close($ctx);
       } else {
         Groonga::API::ctx_fin($ctx);

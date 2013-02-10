@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Groonga::API::Test;
 
-plan skip_all => 'requires command version > 1' if Groonga::API::get_default_command_version() == 1;
+plan skip_all => 'requires groonga version > 1' if Groonga::API::get_major_version() == 1;
 
 ctx_test(sub {
   my $ctx = shift;
