@@ -30,6 +30,14 @@ Groonga::API::init() and BAIL_OUT;
   is $rc => GRN_SUCCESS, "set default encoding";
 }
 
+if (Groonga::API::get_major_version() > 2) {
+  my $encoding = Groonga::API::encoding_to_string(GRN_ENC_UTF8);
+  is $encoding => 'utf8', "stringify encoding";
+
+  my $encoding_cd = Groonga::API::encoding_parse("utf8");
+  is $encoding_cd => GRN_ENC_UTF8, "parse encoding";
+}
+
 { # match escalation threshold
   my $threshold = Groonga::API::get_default_match_escalation_threshold();
   ok defined $threshold, "default match escalation threshold: $threshold";
