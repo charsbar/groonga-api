@@ -243,9 +243,6 @@ sub extract_apis {
     # TODO: plugin
     qw/plugin_register plugin_register_by_path/,
 
-    # TODO: query_logger
-    qw/query_logger_pass query_logger_put query_logger_reopen/,
-
     # TODO: str (obsolete)
     qw/str_close str_open/,
 
