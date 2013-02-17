@@ -13,6 +13,10 @@ db_test(sub { # builtin type
   my $header = $type->header;
   ok $header->{flags} & GRN_OBJ_KEY_VAR_SIZE, "short text is variable size";
 
+  is Groonga::API::obj_id($ctx, $type) => GRN_DB_SHORT_TEXT, "correct object id";
+
+  is Groonga::API::obj_is_builtin($ctx, $type) => GRN_TRUE, "builtin object";
+
   Groonga::API::obj_unlink($ctx, $type) if $type;
 });
 
@@ -27,6 +31,11 @@ db_test(sub { # builtin type
   my $header = $type->header;
   ok !($header->{flags} & GRN_OBJ_KEY_VAR_SIZE), "uint32 is fixed size";
 
+  is Groonga::API::obj_id($ctx, $type) => GRN_DB_UINT32, "correct object id";
+
+  is Groonga::API::obj_is_builtin($ctx, $type) => GRN_TRUE, "builtin object";
+
+
   Groonga::API::obj_unlink($ctx, $type) if $type;
 });
 
@@ -38,6 +47,8 @@ db_test(sub { # new type
   ok defined $type, "defined type";
   is ref $type => "Groonga::API::obj", "correct object";
   ok $$type, "type pointer: $$type";
+
+  is Groonga::API::obj_is_builtin($ctx, $type) => GRN_FALSE, "not a builtin object";
 
   Groonga::API::obj_unlink($ctx, $type) if $type;
 });
