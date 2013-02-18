@@ -246,9 +246,6 @@ sub extract_apis {
     # TODO: string
     qw/string_get_encoding string_get_flags string_open string_set_normalized string_set_types/,
 
-    # TODO: text
-    qw/text_benc text_esc text_escape_xml text_ftoa text_itoa text_itoa_padded text_itob text_itoh text_lltoa text_lltob32h text_time2rfc1123 text_urldec text_urlenc/,
-
     # TODO: vector
     qw/vector_add_element vector_size/,
 
