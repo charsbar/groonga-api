@@ -211,13 +211,10 @@ sub extract_apis {
     qw/column_index_update /,
 
     # TODO: obj
-    qw/obj_check obj_clear_lock obj_columns obj_db obj_defrag obj_delete_by_id obj_expire obj_get_range obj_get_value obj_is_locked obj_lock obj_name obj_open obj_path obj_path_by_id obj_reinit obj_remove obj_rename obj_set_value obj_unlock/,
+    qw/obj_check obj_clear_lock obj_columns obj_db obj_defrag obj_delete_by_id obj_expire obj_get_range obj_get_value obj_is_locked obj_lock obj_name obj_path obj_path_by_id obj_reinit obj_remove obj_rename obj_set_value obj_unlock/,
 
     # TODO: array
     qw/array_create array_open array_close array_cursor_close array_cursor_next array_cursor_open array_cursor_set_value array_get_value array_next array_set_value array_push array_pull/,
-
-    # TODO: bulk
-    qw/bulk_fin bulk_reinit bulk_reserve bulk_resize bulk_space bulk_truncate bulk_write bulk_write_from/,
 
     # TODO: dat
     qw/dat_close dat_create dat_cursor_close dat_cursor_next dat_cursor_open dat_get_key dat_get_key2 dat_open dat_remove dat_size dat_update dat_update_by_id/,

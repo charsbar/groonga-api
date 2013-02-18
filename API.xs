@@ -36,3 +36,17 @@ header(grn_obj * obj)
 
   OUTPUT:
     RETVAL
+
+HV*
+ub(grn_obj * obj)
+  CODE:
+    HV* hv = newHV();
+    if (obj) {
+      hv_stores(hv, "head", newSVpv(GRN_BULK_HEAD(obj), 0));
+      hv_stores(hv, "curr", newSVpv(GRN_BULK_CURR(obj), 0));
+      hv_stores(hv, "tail", newSVpv(GRN_BULK_TAIL(obj), 0));
+    }
+    RETVAL = hv;
+
+  OUTPUT:
+    RETVAL
