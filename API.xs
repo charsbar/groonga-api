@@ -37,6 +37,7 @@ header(grn_obj * obj)
       hv_stores(hv, "flags", newSViv(obj->header.flags));
       hv_stores(hv, "domain", newSViv(obj->header.domain));
     }
+    sv_2mortal((SV*)hv);
     RETVAL = hv;
 
   OUTPUT:
@@ -51,6 +52,7 @@ ub(grn_obj * obj)
       hv_stores(hv, "curr", newSVpv(GRN_BULK_CURR(obj), 0));
       hv_stores(hv, "tail", newSVpv(GRN_BULK_TAIL(obj), 0));
     }
+    sv_2mortal((SV*)hv);
     RETVAL = hv;
 
   OUTPUT:
