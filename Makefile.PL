@@ -262,7 +262,7 @@ sub extract_apis {
     qw/db_touch/,
 
     # TODO table
-    qw/table_columns table_select/,
+    qw/table_columns/,
 
     # grn_proc_func
     qw/ctx_set_finalizer proc_create obj_set_finalizer/,
@@ -311,9 +311,6 @@ sub extract_apis {
 
     # grn_search_optarg *
     qw/obj_search/,
-
-    # grn_expr_flags
-    qw/expr_parse/,
 
     # int *
     qw/column_index hash_add pat_add dat_add/,
@@ -411,6 +408,7 @@ sub extract_apis {
     'const grn_logger_info *' => 'T_GRN_LOGGER_INFO',
     grn_id => 'T_U_INT',
     grn_bool => 'T_U_CHAR',
+    grn_expr_flags => 'T_U_INT',
   );
   my %extra = (
     'long long int' => 'T_IV',

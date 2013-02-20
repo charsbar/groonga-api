@@ -12,6 +12,11 @@ PROTOTYPES: DISABLE
 
 INCLUDE: api.inc
 
+void
+EXPR_CREATE_FOR_QUERY(grn_ctx *ctx, grn_obj *table, OUT grn_obj *expr, OUT grn_obj *var)
+  CODE:
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expr, var);
+
 MODULE = Groonga::API  PACKAGE = Groonga::API::Constants  PREFIX = grn_
 
 PROTOTYPES: DISABLE
