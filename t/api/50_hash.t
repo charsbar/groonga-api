@@ -17,6 +17,7 @@ ctx_test(sub {
     is ref $hash => "Groonga::API::hash", "correct object";
 
     my $rc = Groonga::API::hash_close($ctx, $hash);
+    is $rc => GRN_SUCCESS, "closed";
   }
 
   {
@@ -25,6 +26,7 @@ ctx_test(sub {
     is ref $hash => "Groonga::API::hash", "correct object";
 
     my $rc = Groonga::API::hash_close($ctx, $hash);
+    is $rc => GRN_SUCCESS, "closed";
   }
 });
 

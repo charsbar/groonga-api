@@ -17,6 +17,7 @@ ctx_test(sub {
     is ref $array => "Groonga::API::array", "correct object";
 
     my $rc = Groonga::API::array_close($ctx, $array);
+    is $rc => GRN_SUCCESS, "closed";
   }
 
   {
@@ -25,6 +26,7 @@ ctx_test(sub {
     is ref $array => "Groonga::API::array", "correct object";
 
     my $rc = Groonga::API::array_close($ctx, $array);
+    is $rc => GRN_SUCCESS, "closed";
   }
 });
 
