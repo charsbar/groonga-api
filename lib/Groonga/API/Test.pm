@@ -113,7 +113,7 @@ sub table_test {
     my ($ctx, $db) = @_;
 
     my $name = "table";
-    my $keytype = Groonga::API::ctx_at($ctx, GRN_DB_SHORT_TEXT);
+    my $keytype = (($table_key & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) ? undef : Groonga::API::ctx_at($ctx, GRN_DB_SHORT_TEXT);
     my $valtype = Groonga::API::ctx_at($ctx, GRN_DB_UINT32);
     my $table = Groonga::API::table_create($ctx, $name, bytes::length($name), undef, $table_key, $keytype, $valtype);
     if ($table and ref $table eq "Groonga::API::obj") {

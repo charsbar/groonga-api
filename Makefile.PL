@@ -214,7 +214,7 @@ sub extract_apis {
     qw/obj_check obj_clear_lock obj_columns obj_db obj_defrag obj_delete_by_id obj_expire obj_get_range obj_get_value obj_is_locked obj_lock obj_name obj_path obj_path_by_id obj_reinit obj_remove obj_rename obj_set_value obj_unlock/,
 
     # TODO: array
-    qw/array_create array_open array_close array_cursor_close array_cursor_next array_cursor_open array_cursor_set_value array_get_value array_next array_set_value array_push array_pull/,
+    qw/array_push array_pull/,
 
     # TODO: dat
     qw/dat_close dat_create dat_cursor_close dat_cursor_next dat_cursor_open dat_get_key dat_get_key2 dat_open dat_remove dat_size dat_update dat_update_by_id/,
@@ -304,7 +304,7 @@ sub extract_apis {
     qw/ctx_info_get/,
 
     # table_delete_optarg *
-    qw/array_cursor_delete array_delete_by_id pat_delete_by_id pat_delete pat_delete_with_sis pat_cursor_delete dat_delete_by_id dat_delete dat_cursor_delete/,
+    qw/pat_delete_by_id pat_delete pat_delete_with_sis pat_cursor_delete dat_delete_by_id dat_delete dat_cursor_delete/,
 
     # grn_search_optarg *
     qw/obj_search/,
@@ -328,7 +328,7 @@ sub extract_apis {
     qw/vector_get_element string_get_original string_get_normalized pat_scan/,
 
     # void **
-    qw/obj_get_values array_add array_cursor_get_value pat_get pat_add pat_cursor_get_key pat_cursor_get_value pat_cursor_get_key_value dat_get dat_add dat_cursor_get_key/,
+    qw/obj_get_values pat_get pat_add pat_cursor_get_key pat_cursor_get_value pat_cursor_get_key_value dat_get dat_add dat_cursor_get_key/,
 
     # functions
     qw/ctx_recv_handler_set/,
@@ -369,6 +369,9 @@ sub extract_apis {
       'unsigned int *key_size' => 'OUT unsigned int key_size_out',
       'void **value' => 'OUT void *value_out',
     },
+    grn_array_add => {'void **value' => 'OUT void *value_out'},
+    grn_array_get_value => 'void *valuebuf',
+    grn_array_cursor_get_value => {'void **value' => 'OUT void *value_out'},
   );
 
   {
