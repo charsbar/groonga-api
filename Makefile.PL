@@ -225,9 +225,6 @@ sub extract_apis {
     # TODO: geo
     qw/geo_cursor_next geo_cursor_open_in_rectangle geo_estimate_in_rectangle geo_select_in_rectangle/,
 
-    # TODO: hash
-    qw/hash_close hash_create hash_cursor_close hash_cursor_next hash_cursor_open hash_cursor_set_value hash_get_key hash_get_key2 hash_get_value hash_open hash_set_value/,
-
     # TODO: index
     qw/index_cursor_open/,
 
@@ -307,13 +304,13 @@ sub extract_apis {
     qw/ctx_info_get/,
 
     # table_delete_optarg *
-    qw/hash_delete_by_id hash_delete hash_cursor_delete array_cursor_delete array_delete_by_id pat_delete_by_id pat_delete pat_delete_with_sis pat_cursor_delete dat_delete_by_id dat_delete dat_cursor_delete/,
+    qw/array_cursor_delete array_delete_by_id pat_delete_by_id pat_delete pat_delete_with_sis pat_cursor_delete dat_delete_by_id dat_delete dat_cursor_delete/,
 
     # grn_search_optarg *
     qw/obj_search/,
 
     # int *
-    qw/column_index hash_add pat_add dat_add/,
+    qw/column_index pat_add dat_add/,
 
     # short *
     qw/string_set_checks/,
@@ -331,7 +328,7 @@ sub extract_apis {
     qw/vector_get_element string_get_original string_get_normalized pat_scan/,
 
     # void **
-    qw/obj_get_values hash_add hash_get hash_cursor_get_key hash_cursor_get_value hash_cursor_get_key_value array_add array_cursor_get_value pat_get pat_add pat_cursor_get_key pat_cursor_get_value pat_cursor_get_key_value dat_get dat_add dat_cursor_get_key/,
+    qw/obj_get_values array_add array_cursor_get_value pat_get pat_add pat_cursor_get_key pat_cursor_get_value pat_cursor_get_key_value dat_get dat_add dat_cursor_get_key/,
 
     # functions
     qw/ctx_recv_handler_set/,
@@ -356,6 +353,21 @@ sub extract_apis {
       'char **str' => 'OUT char *str_out',
       'unsigned int *str_len', 'OUT unsigned int str_len_out',
       'int *flags', 'OUT int flags_out',
+    },
+    grn_hash_add => {
+      'int *added' => 'OUT int added_out',
+      'void **value' => 'OUT void *value_out',
+    },
+    grn_hash_get => {'void **value' => 'OUT void *value_out'},
+    grn_hash_get_key => 'void *keybuf',
+    grn_hash_get_key2 => 'grn_obj *bulk_out',
+    grn_hash_get_value => 'void *valuebuf',
+    grn_hash_cursor_get_key => {'void **key' => 'OUT void *key_out'},
+    grn_hash_cursor_get_value => {'void **value' => 'OUT void *value_out'},
+    grn_hash_cursor_get_key_value => {
+      'void **key' => 'OUT void *key_out',
+      'unsigned int *key_size' => 'OUT unsigned int key_size_out',
+      'void **value' => 'OUT void *value_out',
     },
   );
 
@@ -409,6 +421,7 @@ sub extract_apis {
     grn_id => 'T_U_INT',
     grn_bool => 'T_U_CHAR',
     grn_expr_flags => 'T_U_INT',
+    'grn_table_delete_optarg *' => 'T_GRN_IGNORE',
   );
   my %extra = (
     'long long int' => 'T_IV',
