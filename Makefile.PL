@@ -228,9 +228,6 @@ sub extract_apis {
     # TODO: output_envelope
     qw/output_envelope/,
 
-    # TODO: pat
-    qw/pat_close pat_create pat_cursor_close pat_cursor_next pat_cursor_open pat_cursor_set_value pat_get_key pat_get_key2 pat_get_value pat_lcp_search pat_open pat_prefix_search pat_remove pat_set_value pat_size pat_suffix_search/,
-
     # TODO: plugin
     qw/plugin_register plugin_register_by_path/,
 
@@ -300,14 +297,11 @@ sub extract_apis {
     # grn_ctx_info *
     qw/ctx_info_get/,
 
-    # table_delete_optarg *
-    qw/pat_delete_by_id pat_delete pat_delete_with_sis pat_cursor_delete/,
-
     # grn_search_optarg *
     qw/obj_search/,
 
     # int *
-    qw/column_index pat_add/,
+    qw/column_index/,
 
     # short *
     qw/string_set_checks/,
@@ -325,7 +319,7 @@ sub extract_apis {
     qw/vector_get_element string_get_original string_get_normalized pat_scan/,
 
     # void **
-    qw/obj_get_values pat_get pat_add pat_cursor_get_key pat_cursor_get_value pat_cursor_get_key_value/,
+    qw/obj_get_values/,
 
     # functions
     qw/ctx_recv_handler_set/,
@@ -377,6 +371,21 @@ sub extract_apis {
     grn_dat_get_key => 'void *keybuf',
     grn_dat_get_key2 => 'grn_obj *bulk_out',
     grn_dat_cursor_get_key => {'const void **key' => 'OUT const void *key_out'},
+    grn_pat_add => {
+      'int *added' => 'OUT int added_out',
+      'void **value' => 'OUT void *value_out',
+    },
+    grn_pat_get => {'void **value' => 'OUT void *value_out'},
+    grn_pat_get_key => 'void *keybuf',
+    grn_pat_get_key2 => 'grn_obj *bulk_out',
+    grn_pat_get_value => 'void *valuebuf',
+    grn_pat_cursor_get_key => {'void **key' => 'OUT void *key_out'},
+    grn_pat_cursor_get_value => {'void **value' => 'OUT void *value_out'},
+    grn_pat_cursor_get_key_value => {
+      'void **key' => 'OUT void *key_out',
+      'unsigned int *key_size' => 'OUT unsigned int key_size_out',
+      'void **value' => 'OUT void *value_out',
+    },
   );
 
   {
