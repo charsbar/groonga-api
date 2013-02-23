@@ -6,7 +6,7 @@ db_test(sub {
   my ($ctx, $db) = @_;
   my $command = "status";
   my $ret = Groonga::API::ctx_send($ctx, $command, bytes::length($command), 0);
-  is $ret => GRN_SUCCESS, "send status";
+  is $ret => GRN_SUCCESS, "sent status";
 
   if (Groonga::API::get_major_version() > 1) {
     my $ctype = Groonga::API::ctx_get_mime_type($ctx);
