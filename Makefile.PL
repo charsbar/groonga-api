@@ -267,9 +267,6 @@ sub extract_apis {
     # grn_table_group_result *
     qw/table_group/,
 
-    # grn_info_type
-    qw/obj_get_info obj_set_info obj_get_element_info obj_set_element_info/,
-
     # get_hook_entry
     qw/obj_add_hook obj_get_nhooks obj_get_hook obj_delete_hook/,
 
@@ -439,6 +436,7 @@ sub extract_apis {
     grn_bool => 'T_U_CHAR',
     grn_expr_flags => 'T_U_INT',
     'grn_table_delete_optarg *' => 'T_GRN_IGNORE',
+    grn_info_type => 'T_ENUM',
   );
   my %extra = (
     'long long int' => 'T_IV',
