@@ -101,14 +101,14 @@ table_test(sub {
 
   {
     my $old_key = "new_key2";
-    my $new_key = "upd_key2";
+    my $new_key = "updated_key2";
     my $rc = Groonga::API::dat_update($ctx, $dat, $old_key, bytes::length($old_key), $new_key, bytes::length($new_key));
     is $rc => GRN_SUCCESS, "updated";
 
     my $buf = ' ' x 4096;
     my $len = Groonga::API::dat_get_key($ctx, $dat, 2, $buf, bytes::length($buf));
     ok $len, "key length: $len";
-    is substr($buf, 0, $len) => "upd_key2", "correct key";
+    is substr($buf, 0, $len) => "updated_key2", "correct key";
   }
 
   # dat_cursor

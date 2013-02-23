@@ -334,9 +334,9 @@ sub extract_apis {
 
   my %inout = (
     grn_table_add => {'int *added' => 'OUT int added_out'},
-    grn_table_get_key => 'void *keybuf',
-    grn_table_cursor_get_key => {'void **key' => 'OUT void *key_out'},
-    grn_table_cursor_get_value => {'void **value' => 'OUT void *value_out'},
+    grn_table_get_key => {'void *keybuf' => 'IN_OUT void *keybuf_inout_length_RETVAL'},
+    grn_table_cursor_get_key => {'void **key' => 'OUT void *key_out_length_RETVAL'},
+    grn_table_cursor_get_value => {'void **value' => 'OUT void *value_out_length_RETVAL'},
     grn_ctx_recv => {
       'char **str' => 'OUT char *str_out',
       'unsigned int *str_len', 'OUT unsigned int str_len_out',
@@ -347,41 +347,38 @@ sub extract_apis {
       'void **value' => 'OUT void *value_out',
     },
     grn_hash_get => {'void **value' => 'OUT void *value_out'},
-    grn_hash_get_key => 'void *keybuf',
-    grn_hash_get_key2 => 'grn_obj *bulk_out',
-    grn_hash_get_value => 'void *valuebuf',
-    grn_hash_cursor_get_key => {'void **key' => 'OUT void *key_out'},
-    grn_hash_cursor_get_value => {'void **value' => 'OUT void *value_out'},
+    grn_hash_get_key => {'void *keybuf' => 'IN_OUT void *keybuf_inout_length_RETVAL'},
+    grn_hash_get_value => {'void *valuebuf' => 'IN_OUT void *valuebuf_inout_length_RETVAL'},
+    grn_hash_cursor_get_key => {'void **key' => 'OUT void *key_out_length_RETVAL'},
+    grn_hash_cursor_get_value => {'void **value' => 'OUT void *value_out_length_RETVAL'},
     grn_hash_cursor_get_key_value => {
       'void **key' => 'OUT void *key_out',
       'unsigned int *key_size' => 'OUT unsigned int key_size_out',
-      'void **value' => 'OUT void *value_out',
+      'void **value' => 'OUT void *value_out_length_RETVAL',
     },
     grn_array_add => {'void **value' => 'OUT void *value_out'},
-    grn_array_get_value => 'void *valuebuf',
-    grn_array_cursor_get_value => {'void **value' => 'OUT void *value_out'},
+    grn_array_get_value => {'void *valuebuf' => 'IN_OUT void *valuebuf_inout_length_RETVAL'},
+    grn_array_cursor_get_value => {'void **value' => 'OUT void *value_out_length_RETVAL'},
     grn_dat_add => {
       'int *added' => 'OUT int added_out',
       'void **value' => 'NULL',
     },
     grn_dat_get => {'void **value' => 'OUT void *value_out'},
-    grn_dat_get_key => 'void *keybuf',
-    grn_dat_get_key2 => 'grn_obj *bulk_out',
-    grn_dat_cursor_get_key => {'const void **key' => 'OUT const void *key_out'},
+    grn_dat_get_key => {'void *keybuf' => 'IN_OUT void *keybuf_inout_length_RETVAL'},
+    grn_dat_cursor_get_key => {'const void **key' => 'OUT const void *key_out_length_RETVAL'},
     grn_pat_add => {
       'int *added' => 'OUT int added_out',
       'void **value' => 'OUT void *value_out',
     },
     grn_pat_get => {'void **value' => 'OUT void *value_out'},
-    grn_pat_get_key => 'void *keybuf',
-    grn_pat_get_key2 => 'grn_obj *bulk_out',
-    grn_pat_get_value => 'void *valuebuf',
-    grn_pat_cursor_get_key => {'void **key' => 'OUT void *key_out'},
-    grn_pat_cursor_get_value => {'void **value' => 'OUT void *value_out'},
+    grn_pat_get_key => {'void *keybuf' => 'IN_OUT void *keybuf_inout_length_RETVAL'},
+    grn_pat_get_value => {'void *valuebuf' => 'IN_OUT void *valuebuf_inout_length_RETVAL'},
+    grn_pat_cursor_get_key => {'void **key' => 'OUT void *key_out_length_RETVAL'},
+    grn_pat_cursor_get_value => {'void **value' => 'OUT void *value_out_length_RETVAL'},
     grn_pat_cursor_get_key_value => {
       'void **key' => 'OUT void *key_out',
       'unsigned int *key_size' => 'OUT unsigned int key_size_out',
-      'void **value' => 'OUT void *value_out',
+      'void **value' => 'OUT void *value_out_length_RETVAL',
     },
   );
 
@@ -550,7 +547,7 @@ T_PV_OR_UNDEF
   }
 
 T_OPAQUE_
-  sv_setpvn($arg, (char *)${ $var =~ /_out$/ ? \$var : \qq{\&$var} }, sizeof($var));
+  sv_setpvn($arg, (char *)${ $var =~ /_out(_length_.+)?$/ ? \$var : \qq{\&$var} }, ${ $var =~ /_length_(\w+)/ ? \qq{$1} : \qq{sizeof($var)}});
 
 TYPEMAP
   }
