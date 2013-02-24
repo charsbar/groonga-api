@@ -706,4 +706,8 @@ JSON
   ];
 }
 
+undef $ploonga;
+
+rmtree $tmpdir if Test::More->builder->is_passing;
+
 done_testing;
