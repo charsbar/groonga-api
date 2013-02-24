@@ -149,6 +149,40 @@ table_test(sub {
 ctx_test(sub {
   my $ctx = shift;
 
+  my @keys = (
+    "セナ",
+    "ナセナセ",
+    "Groonga",
+    "セナ + Ruby",
+    "セナセナ",
+  );
+
+  my $key_size = 100;
+  my $pat = Groonga::API::pat_create($ctx, undef, $key_size, 0, GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_KEY_WITH_SIS);
+  ok defined $pat, "created";
+  is ref $pat => "Groonga::API::pat", "correct object";
+
+  for my $key (@keys) {
+    my $id = Groonga::API::pat_add($ctx, $pat, $key, bytes::length($key), my $value, my $added);
+    ok $id, "added $id";
+  }
+
+  my $key = "セ";
+  my $id = Groonga::API::pat_lcp_search($ctx, $pat, $key, bytes::length($key));
+  ok $id, "found $id";
+
+  my $buf = ' ' x $key_size;
+  my $len = Groonga::API::pat_get_key($ctx, $pat, $id, $buf, $key_size);
+  is $buf => "セ", "correct key";
+
+  Groonga::API::pat_delete_with_sis($ctx, $pat, $id, undef);
+
+  Groonga::API::pat_close($ctx, $pat);
+});
+
+ctx_test(sub {
+  my $ctx = shift;
+
   # borrowed from groonga's unit test
   note "prefix search";
   _pat_search_test($ctx, \&Groonga::API::pat_prefix_search, (
