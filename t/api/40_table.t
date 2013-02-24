@@ -79,7 +79,7 @@ table_column_test(sub {
   }
 });
 
-table_test(sub {
+table_column_test(sub {
   my ($ctx, $db, $table, $column) = @_;
 
   my $rc = load_into_table($ctx, [
