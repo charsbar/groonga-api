@@ -10,7 +10,7 @@ table_column_test(sub {
     {_key => 'key2', text => 'text2'},
     {_key => 'key3', text => 'text3'},
   ]);
-  is $rc => GRN_SUCCESS;
+  is $rc => GRN_SUCCESS, "loaded";
 
   {
     my $size = Groonga::API::table_size($ctx, $table);
