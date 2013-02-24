@@ -36,6 +36,16 @@ ctx_test(sub {
   my $rc = Groonga::API::ctx_use($ctx, $db2);
   is $rc => GRN_SUCCESS, "use temp db";
 
+  $rc = Groonga::API::ctx_push($ctx, $db2);
+  is $rc => GRN_SUCCESS, "pushed temp db";
+
+  my $db2_ = Groonga::API::ctx_pop($ctx);
+  ok defined $db2_, "popped temp db";
+  is ref $db2_ => "Groonga::API::obj", "correct object";
+  my $pt2_ = $$db2_;
+  is $pt2 => $pt2_, "correct pointer";
+
+  # no need to unlink db2_
   Groonga::API::obj_unlink($ctx, $db2) if $db2;
   Groonga::API::obj_unlink($ctx, $db_) if $db_;
 

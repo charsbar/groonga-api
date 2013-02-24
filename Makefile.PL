@@ -246,9 +246,6 @@ sub extract_apis {
     # TODO: ctx_output
     qw/ctx_output_array_close ctx_output_array_open ctx_output_bool ctx_output_cstr ctx_output_float ctx_output_int32 ctx_output_int64 ctx_output_map_close ctx_output_map_open ctx_output_str/,
 
-    # TODO: ctx
-    qw/ctx_pop ctx_push/,
-
     # TODO: db
     qw/db_touch/,
 
