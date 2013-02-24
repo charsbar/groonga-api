@@ -211,7 +211,7 @@ sub extract_apis {
     qw/column_index_update /,
 
     # TODO: obj
-    qw/obj_columns obj_db obj_delete_by_id obj_get_range obj_get_value  obj_name obj_path_by_id obj_reinit obj_rename obj_set_value/,
+    qw/obj_columns obj_delete_by_id obj_get_range obj_get_value obj_path_by_id obj_reinit obj_rename obj_set_value/,
 
     # TODO: array
     qw/array_push array_pull/,
@@ -248,9 +248,6 @@ sub extract_apis {
 
     # TODO: db
     qw/db_touch/,
-
-    # TODO table
-    qw/table_columns/,
 
     # grn_proc_func
     qw/ctx_set_finalizer proc_create obj_set_finalizer/,
@@ -436,6 +433,7 @@ sub extract_apis {
     'long long int' => 'T_IV',
     'const void *' => 'T_PV_OR_UNDEF',
     'const char *' => 'T_PV_OR_UNDEF',
+    'char *' => 'T_PV_OR_UNDEF',
     'void *' => 'T_OPAQUE_',
   );
 

@@ -90,6 +90,54 @@ table_column_test(sub {
   is $rc => GRN_SUCCESS, "loaded";
 
   {
+    my $belongs_to = Groonga::API::obj_db($ctx, $table);
+    ok defined $belongs_to, "got db";
+    is ref $belongs_to => "Groonga::API::obj", "correct object";
+    is $$belongs_to => $$db, "correct pointer";
+  }
+
+  {
+    my $buf = ' ' x 4096;
+    my $len = Groonga::API::obj_name($ctx, $table, $buf, bytes::length($buf));
+    is substr($buf, 0, $len) => "table", "correct name";
+  }
+
+  {
+    my $key_type = Groonga::API::ctx_at($ctx, GRN_DB_SHORT_TEXT);
+    my $res = Groonga::API::table_create($ctx, undef, 0, undef, GRN_OBJ_TABLE_HASH_KEY, $key_type, undef);
+
+    my $num = Groonga::API::table_columns($ctx, $table, undef, 0, $res);
+    ok $num, "found $num column(s)";
+
+    my $cursor = Groonga::API::table_cursor_open($ctx, $res, undef, 0, undef, 0, 0, -1, GRN_CURSOR_ASCENDING);
+    my @found;
+    while(my $id = Groonga::API::table_cursor_next($ctx, $cursor)) {
+      my $buf = ' ' x 4096;
+      my $len = Groonga::API::table_cursor_get_key($ctx, $cursor, $buf);
+      my $col_id = unpack 'L', substr($buf, 0, $len);
+      my $col = Groonga::API::ctx_at($ctx, $col_id);
+      $buf = ' ' x 4096;
+      $len = Groonga::API::obj_name($ctx, $col, $buf, bytes::length($buf));
+      push @found, substr($buf, 0, $len);
+    }
+    is_deeply [sort @found] => ["table.text"], "correct column(s)";
+
+    Groonga::API::table_cursor_close($ctx, $cursor);
+    Groonga::API::obj_unlink($ctx, $res);
+  }
+});
+
+table_column_test(sub {
+  my ($ctx, $db, $table, $column) = @_;
+
+  my $rc = load_into_table($ctx, [
+    {_key => 'key1', text => 'text1'},
+    {_key => 'key2', text => 'text2'},
+    {_key => 'key3', text => 'text3'},
+  ]);
+  is $rc => GRN_SUCCESS, "loaded";
+
+  {
     my $new_key = "new_key1";
     $rc = Groonga::API::table_update_by_id($ctx, $table, 1, $new_key, bytes::length($new_key));
 
