@@ -20,6 +20,7 @@ my %rest;
     next if $file =~ /rest\.t$/;
     my $test = do { open my $fh, '<', $file; local $/; <$fh> };
     my @used = $test =~ /Groonga::API::([a-z0-9_]+)\(/g;
+    push @used, $test =~ /\&Groonga::API::([a-z0-9_]+)/g;
     delete $rest{$_} for @used;
   }
 }
