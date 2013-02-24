@@ -149,18 +149,9 @@ table_test(sub {
 ctx_test(sub {
   my $ctx = shift;
 
-  Groonga::API::set_default_encoding(GRN_ENC_UTF8);
-
-  my @keys = (
-    "セナ",
-    "ナセナセ",
-    "Groonga",
-    "セナ + Ruby",
-    "セナセナ",
-  );
-
   # borrowed from groonga's unit test
-  my @testdata = (
+  note "prefix search";
+  _pat_search_test($ctx, \&Groonga::API::pat_prefix_search, (
     ["default - nonexistence", 0,
       "カッター", GRN_END_OF_DATA, [],
     ],
@@ -189,10 +180,56 @@ ctx_test(sub {
     ["sis - long", GRN_OBJ_KEY_WITH_SIS,
       "セナセナセナ", GRN_END_OF_DATA, [],
     ],
+  ));
+
+  note "suffix search";
+  _pat_search_test($ctx, \&Groonga::API::pat_suffix_search, (
+    ["default - nonexistence", 0,
+      "カッター", GRN_END_OF_DATA, [],
+    ],
+    ["default - short", 0,
+      "ナ", GRN_END_OF_DATA, [],
+    ],
+    ["default - exact", 0,
+      "セナ", GRN_SUCCESS,
+      ["セナ"], 
+    ],
+    ["default - long", 0,
+      "セナセナセナ", GRN_END_OF_DATA, [],
+    ],
+    ["sis - nonexistence", GRN_OBJ_KEY_WITH_SIS,
+      "カッター", GRN_END_OF_DATA, [],
+    ],
+    ["sis - short", GRN_OBJ_KEY_WITH_SIS,
+      "ナ", GRN_SUCCESS,
+      ["セナセナ", "ナセナ", "セナ", "ナ"],
+    ],
+    ["sis - exact", GRN_OBJ_KEY_WITH_SIS,
+      "セナ", GRN_SUCCESS,
+      ["セナセナ", "ナセナ", "セナ"],
+    ],
+    ["sis - long", GRN_OBJ_KEY_WITH_SIS,
+      "セナセナセナ", GRN_END_OF_DATA, [],
+    ],
+  ));
+});
+
+done_testing;
+
+sub _pat_search_test {
+  my ($ctx, $func, @testdata) = @_;
+  Groonga::API::set_default_encoding(GRN_ENC_UTF8);
+
+  my @keys = (
+    "セナ",
+    "ナセナセ",
+    "Groonga",
+    "セナ + Ruby",
+    "セナセナ",
   );
 
   for my $data (@testdata) {
-    note "prefix: $data->[0]";
+    note $data->[0];
     my $key_size = my $value_size = 100; # XXX: arbitrary
     my $flags = GRN_OBJ_KEY_VAR_SIZE | $data->[1];
     my $pat = Groonga::API::pat_create($ctx, undef, $key_size, $value_size, $flags);
@@ -206,7 +243,7 @@ ctx_test(sub {
 
     my $hash = Groonga::API::hash_create($ctx, undef, $key_size, 0, GRN_OBJ_KEY_VAR_SIZE);
     my $key = $data->[2];
-    my $rc = Groonga::API::pat_prefix_search($ctx, $pat, $key, bytes::length($key), $hash);
+    my $rc = $func->($ctx, $pat, $key, bytes::length($key), $hash);
     is $rc => $data->[3], "correct result";
 
     if ($rc == GRN_SUCCESS) {
@@ -227,6 +264,4 @@ ctx_test(sub {
     Groonga::API::hash_close($ctx, $hash);
     Groonga::API::pat_close($ctx, $pat);
   }
-});
-
-done_testing;
+}
