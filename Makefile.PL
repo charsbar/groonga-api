@@ -211,7 +211,7 @@ sub extract_apis {
     qw/column_index_update /,
 
     # TODO: obj
-    qw/obj_columns obj_delete_by_id obj_get_range obj_get_value obj_path_by_id obj_reinit obj_rename obj_set_value/,
+    qw/obj_columns obj_delete_by_id obj_get_value obj_path_by_id obj_reinit obj_set_value/,
 
     # TODO: array
     qw/array_push array_pull/,

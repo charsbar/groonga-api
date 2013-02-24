@@ -27,6 +27,12 @@ db_test(sub {
     is $rc => GRN_SUCCESS, "renamed";
   }
 
+  if (Groonga::API::get_major_version() > 1) {
+    my $new_name = "my_newest_table";
+    my $rc = Groonga::API::obj_rename($ctx, $table, $new_name, bytes::length($new_name));
+    is $rc => GRN_SUCCESS, "renamed";
+  }
+
   Groonga::API::obj_unlink($ctx, $table_) if $table_;
   Groonga::API::obj_unlink($ctx, $table) if $table;
 });

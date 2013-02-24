@@ -125,6 +125,11 @@ table_column_test(sub {
     Groonga::API::table_cursor_close($ctx, $cursor);
     Groonga::API::obj_unlink($ctx, $res);
   }
+
+  {
+    my $id = Groonga::API::obj_get_range($ctx, $column);
+    is $id => GRN_DB_SHORT_TEXT, "correct range";
+  }
 });
 
 table_column_test(sub {
