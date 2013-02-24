@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Groonga::API::Test;
+use Encode;
 
 ctx_test(sub {
   my $ctx = shift;
@@ -144,5 +145,88 @@ table_test(sub {
 
   Groonga::API::pat_cursor_close($ctx, $cursor);
 }, table_key => GRN_OBJ_PERSISTENT|GRN_OBJ_TABLE_PAT_KEY);
+
+ctx_test(sub {
+  my $ctx = shift;
+
+  Groonga::API::set_default_encoding(GRN_ENC_UTF8);
+
+  my @keys = (
+    "セナ",
+    "ナセナセ",
+    "Groonga",
+    "セナ + Ruby",
+    "セナセナ",
+  );
+
+  # borrowed from groonga's unit test
+  my @testdata = (
+    ["default - nonexistence", 0,
+      "カッター", GRN_END_OF_DATA, [],
+    ],
+    ["default - short", 0,
+      "セ", GRN_SUCCESS,
+      ["セナ", "セナ + Ruby", "セナセナ"],
+    ],
+    ["default - exact", 0,
+      "セナ", GRN_SUCCESS,
+      ["セナ", "セナ + Ruby", "セナセナ"], 
+    ],
+    ["default - long", 0,
+      "セナセナセナ", GRN_END_OF_DATA, [],
+    ],
+    ["sis - nonexistence", GRN_OBJ_KEY_WITH_SIS,
+      "カッター", GRN_END_OF_DATA, [],
+    ],
+    ["sis - short", GRN_OBJ_KEY_WITH_SIS,
+      "セ", GRN_SUCCESS,
+      ["セ", "セナ", "セナ + Ruby", "セナセ", "セナセナ"],
+    ],
+    ["sis - exact", GRN_OBJ_KEY_WITH_SIS,
+      "セナ", GRN_SUCCESS,
+      ["セナ", "セナ + Ruby", "セナセ", "セナセナ"],
+    ],
+    ["sis - long", GRN_OBJ_KEY_WITH_SIS,
+      "セナセナセナ", GRN_END_OF_DATA, [],
+    ],
+  );
+
+  for my $data (@testdata) {
+    note "prefix: $data->[0]";
+    my $key_size = my $value_size = 100; # XXX: arbitrary
+    my $flags = GRN_OBJ_KEY_VAR_SIZE | $data->[1];
+    my $pat = Groonga::API::pat_create($ctx, undef, $key_size, $value_size, $flags);
+    ok defined $pat, "created";
+    is ref $pat => "Groonga::API::pat", "correct object";
+
+    for my $key (@keys) {
+      my $id = Groonga::API::pat_add($ctx, $pat, $key, bytes::length($key), my $value, my $added);
+      ok $id, "added $id";
+    }
+
+    my $hash = Groonga::API::hash_create($ctx, undef, $key_size, 0, GRN_OBJ_KEY_VAR_SIZE);
+    my $key = $data->[2];
+    my $rc = Groonga::API::pat_prefix_search($ctx, $pat, $key, bytes::length($key), $hash);
+    is $rc => $data->[3], "correct result";
+
+    if ($rc == GRN_SUCCESS) {
+      my @found;
+      my $cursor = Groonga::API::hash_cursor_open($ctx, $hash, undef, 0, undef, 0, 0, -1, GRN_CURSOR_ASCENDING);
+      while(my $id = Groonga::API::hash_cursor_next($ctx, $cursor)) {
+        my $len = Groonga::API::hash_cursor_get_key($ctx, $cursor, my $key);
+        my $pat_id = unpack 'L', $key;
+        my $buf = ' ' x $key_size;
+        $len = Groonga::API::pat_get_key($ctx, $pat, $pat_id, $buf, $key_size);
+        push @found, $buf;
+      }
+      Groonga::API::hash_cursor_close($ctx, $cursor);
+
+      is_deeply [sort @found] => [sort @{$data->[4]}], "found correct keys";
+    }
+
+    Groonga::API::hash_close($ctx, $hash);
+    Groonga::API::pat_close($ctx, $pat);
+  }
+});
 
 done_testing;
