@@ -58,4 +58,7 @@ table_test(sub {
   }
 });
 
+# TODO: Groonga::API::obj_get_element_info()
+# TODO: Groonga::API::obj_set_element_info()
+
 done_testing;
