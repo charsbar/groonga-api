@@ -211,7 +211,7 @@ sub extract_apis {
     qw/column_index_update /,
 
     # TODO: obj
-    qw/obj_check obj_clear_lock obj_columns obj_db obj_defrag obj_delete_by_id obj_expire obj_get_range obj_get_value obj_is_locked obj_lock obj_name obj_path obj_path_by_id obj_reinit obj_remove obj_rename obj_set_value obj_unlock/,
+    qw/obj_columns obj_db obj_defrag obj_delete_by_id obj_get_range obj_get_value  obj_name obj_path_by_id obj_reinit obj_rename obj_set_value/,
 
     # TODO: array
     qw/array_push array_pull/,

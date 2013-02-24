@@ -12,6 +12,9 @@ ctx_test(sub {
   my $pt = $$db;
   ok $pt, "db pointer: $pt";
 
+  my $path = Groonga::API::obj_path($ctx, $db);
+  is $path => "$dbfile", "correct path";
+
   Groonga::API::obj_close($ctx, $db);
 
   ok -f $dbfile, "dbfile exists";
@@ -50,6 +53,46 @@ ctx_test(sub {
   Groonga::API::obj_unlink($ctx, $db_) if $db_;
 
   ok -f $dbfile, "dbfile still exists";
+
+  {
+    my $db = Groonga::API::db_open($ctx, $dbfile);
+    ok defined $db, "opened";
+    is ref $db => "Groonga::API::obj", "correct object";
+    my $rc = Groonga::API::obj_remove($ctx, $db);
+    is $rc => GRN_SUCCESS, "removed";
+  }
+  ok !-f $dbfile, "dbfile does not exist";
+});
+
+db_test(sub {
+  my ($ctx, $db) = @_;
+
+  {
+    my $rc = Groonga::API::obj_lock($ctx, $db, GRN_ID_NIL, 0);
+    is $rc => GRN_SUCCESS, "locked";
+  }
+
+  {
+    ok Groonga::API::obj_is_locked($ctx, $db), "db is locked";
+  }
+
+  {
+    my $rc = Groonga::API::obj_unlock($ctx, $db, GRN_ID_NIL);
+    is $rc => GRN_SUCCESS, "unlocked";
+  }
+
+  {
+    my $rc = Groonga::API::obj_lock($ctx, $db, GRN_ID_NIL, 0);
+    is $rc => GRN_SUCCESS, "locked again";
+  }
+
+  {
+    my $rc = Groonga::API::obj_clear_lock($ctx, $db);
+    is $rc => GRN_SUCCESS, "cleared lock";
+  }
 });
 
 done_testing;
+
+# TODO: Groonga::API::obj_check()
+# TODO: Groonga::API::obj_expire()
