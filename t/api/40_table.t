@@ -69,6 +69,11 @@ table_column_test(sub {
   }
 
   {
+    Groonga::API::obj_defrag($ctx, $table, 0);
+    Groonga::API::obj_defrag($ctx, $db, 0);
+  }
+
+  {
     my $rc = Groonga::API::table_truncate($ctx, $table);
     is $rc => GRN_SUCCESS, "truncated";
   }
