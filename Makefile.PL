@@ -276,9 +276,6 @@ sub extract_apis {
     # grn_object_format *
     qw/output_obj ctx_output_obj/,
 
-    # grn_table_sort_key *
-    qw/table_sort table_sort_key_from_str table_sort_key_close/,
-
     # grn_user_data *
     qw/obj_user_data/,
 
@@ -298,7 +295,7 @@ sub extract_apis {
     qw/string_set_checks/,
 
     # unsigned int *
-    qw/string_get_original string_get_normalized table_sort_key_from_str /,
+    qw/string_get_original string_get_normalized/,
 
     # const unsigned char *
     qw/string_get_types/,
@@ -374,6 +371,7 @@ sub extract_apis {
       'unsigned int *key_size' => 'OUT unsigned int key_size_out',
       'void **value' => 'OUT void *value_out_length_RETVAL',
     },
+    grn_table_sort_key_from_str => {'unsigned int *nkeys' => 'OUT unsigned int nkeys'},
   );
 
   {
@@ -428,6 +426,7 @@ sub extract_apis {
     grn_expr_flags => 'T_U_INT',
     'grn_table_delete_optarg *' => 'T_GRN_IGNORE',
     grn_info_type => 'T_ENUM',
+    'grn_table_sort_key *' => 'T_GRN_TABLE_SORT_KEY',
   );
   my %extra = (
     'long long int' => 'T_IV',
@@ -472,6 +471,16 @@ T_GRN_CTX
     croak(\"$var is not of type ${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\")
 
 T_GRN_OBJ
+  if (!SvOK($arg)) {
+    $var = NULL;
+  } else if (sv_derived_from($arg, \"${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\")){
+    IV tmp = SvIV((SV*)SvRV($arg));
+    $var = INT2PTR($type, tmp);
+  }
+  else
+    croak(\"$var is not of type ${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\")
+
+T_GRN_TABLE_SORT_KEY
   if (!SvOK($arg)) {
     $var = NULL;
   } else if (sv_derived_from($arg, \"${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\")){
@@ -532,6 +541,9 @@ T_GRN_CTX
   sv_setref_pv($arg, \"Groonga::API::ctx\", (void*)$var);
 
 T_GRN_OBJ
+  sv_setref_pv($arg, \"${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\", (void*)$var);
+
+T_GRN_TABLE_SORT_KEY
   sv_setref_pv($arg, \"${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\", (void*)$var);
 
 T_PV_OR_UNDEF
