@@ -38,10 +38,7 @@ ctx_test(sub {
 });
 
 table_test(sub {
-  my ($ctx, $db, $table) = @_;
-
-  my $pt = $$table;
-  my $dat = bless \$pt, "Groonga::API::dat";
+  my ($ctx, $db, $dat) = @_;
 
   for my $ct (1..4) {
     my $key = "key$ct";

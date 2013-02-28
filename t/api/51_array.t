@@ -31,10 +31,7 @@ ctx_test(sub {
 });
 
 table_test(sub {
-  my ($ctx, $db, $table) = @_;
-
-  my $pt = $$table;
-  my $array = bless \$pt, "Groonga::API::array";
+  my ($ctx, $db, $array) = @_;
 
   for my $ct (1..4) {
     my $id = Groonga::API::array_add($ctx, $array, my $value);

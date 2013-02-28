@@ -8,6 +8,12 @@
 
 MODULE = Groonga::API  PACKAGE = Groonga::API  PREFIX = grn_
 
+BOOT:
+  av_push(get_av("Groonga::API::array::ISA", TRUE), newSVpv("Groonga::API::obj", 0));
+  av_push(get_av("Groonga::API::hash::ISA", TRUE), newSVpv("Groonga::API::obj", 0));
+  av_push(get_av("Groonga::API::pat::ISA", TRUE), newSVpv("Groonga::API::obj", 0));
+  av_push(get_av("Groonga::API::dat::ISA", TRUE), newSVpv("Groonga::API::obj", 0));
+
 PROTOTYPES: DISABLE
 
 INCLUDE: api.inc

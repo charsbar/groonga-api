@@ -476,6 +476,9 @@ T_GRN_OBJ
   } else if (sv_derived_from($arg, \"${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\")){
     IV tmp = SvIV((SV*)SvRV($arg));
     $var = INT2PTR($type, tmp);
+  } else if (sv_derived_from($arg, \"Groonga::API::obj\")){
+    IV tmp = SvIV((SV*)SvRV($arg));
+    $var = INT2PTR($type, tmp);
   }
   else
     croak(\"$var is not of type ${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\")
