@@ -160,9 +160,20 @@ sub indexed_table_test {
     my $table_name = "index_table";
     my $type = Groonga::API::ctx_at($ctx, GRN_DB_SHORT_TEXT);
     my $index_table = Groonga::API::table_create($ctx, $table_name, bytes::length($table_name), undef, $table_key, $type, undef);
+    ok defined $index_table, "created index table";
+
+    my $tokenizer = Groonga::API::ctx_at($ctx, GRN_DB_BIGRAM);
+    my $rc = Groonga::API::obj_set_info($ctx, $index_table, GRN_INFO_DEFAULT_TOKENIZER, $tokenizer);
+    is $rc => GRN_SUCCESS, "set tokenizer";
 
     my $index_name = "index";
     my $index_column = Groonga::API::column_create($ctx, $index_table, $index_name, bytes::length($index_name), undef, GRN_OBJ_COLUMN_INDEX|GRN_OBJ_WITH_POSITION, $table);
+
+    my $bulk = Groonga::API::obj_open($ctx, GRN_BULK, 0, GRN_DB_UINT32);
+    my $source_id = pack 'L', Groonga::API::obj_id($ctx, $column);
+    Groonga::API::bulk_write($ctx, $bulk, $source_id, bytes::length($source_id));
+    $rc = Groonga::API::obj_set_info($ctx, $index_column, GRN_INFO_SOURCE, $bulk);
+    is $rc => GRN_SUCCESS, "set source";
 
     if ($index_table and ref $index_table eq "Groonga::API::obj") {
       eval { $test->($ctx, $db, $table, $column, $index_table, $index_column) };

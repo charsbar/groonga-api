@@ -222,9 +222,6 @@ sub extract_apis {
     # TODO: geo
     qw/geo_cursor_next geo_cursor_open_in_rectangle geo_estimate_in_rectangle geo_select_in_rectangle/,
 
-    # TODO: index
-    qw/index_cursor_open/,
-
     # TODO: output_envelope
     qw/output_envelope/,
 
@@ -256,7 +253,7 @@ sub extract_apis {
     qw/proc_create proc_get_info/,
 
     # grn_id * (short int *)
-    qw/index_cursor_next vector_get_element/,
+    qw/vector_get_element/,
 
     # grn_table_group_result *
     qw/table_group/,
@@ -372,6 +369,7 @@ sub extract_apis {
       'void **value' => 'OUT void *value_out_length_RETVAL',
     },
     grn_table_sort_key_from_str => {'unsigned int *nkeys' => 'OUT unsigned int nkeys'},
+    grn_index_cursor_next => {'grn_id *tid' => 'IN_OUT grn_id tid'},
   );
 
   {
