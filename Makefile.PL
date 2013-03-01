@@ -207,7 +207,7 @@ sub extract_apis {
 
   my %todo = map {("grn_$_" => 1)} (
     # TODO: obj
-    qw/obj_columns obj_delete_by_id obj_get_value obj_path_by_id obj_reinit obj_set_value/,
+    qw/obj_columns obj_delete_by_id obj_path_by_id obj_reinit/,
 
     # TODO: array
     qw/array_push array_pull/,

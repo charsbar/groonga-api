@@ -130,6 +130,23 @@ table_column_test(sub {
     my $id = Groonga::API::obj_get_range($ctx, $column);
     is $id => GRN_DB_SHORT_TEXT, "correct range";
   }
+
+  {
+    my $value = Groonga::API::obj_get_value($ctx, $column, 1, undef);
+    is $value->ub->{head} => "text1", "correct column value";
+  }
+
+  {
+    my $new_value = Groonga::API::obj_open($ctx, GRN_BULK, 0, GRN_DB_TEXT);
+    Groonga::API::bulk_write($ctx, $new_value, "new_text1", bytes::length("new_text1"));
+    my $rc = Groonga::API::obj_set_value($ctx, $column, 1, $new_value, GRN_OBJ_SET);
+    is $rc => GRN_SUCCESS, "new text";
+  }
+
+  {
+    my $value = Groonga::API::obj_get_value($ctx, $column, 1, undef);
+    is $value->ub->{head} => "new_text1", "correct column value";
+  }
 });
 
 table_column_test(sub {
