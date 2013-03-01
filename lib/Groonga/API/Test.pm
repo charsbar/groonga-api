@@ -72,7 +72,6 @@ sub ctx_test {
     if (Groonga::API::get_major_version() > 2) {
       my $logdir = $ROOT ? $ROOT->subdir("tmp/log")->mkdir : ".";
       Groonga::API::default_logger_set_path("$logdir/groonga.log");
-      Groonga::API::default_query_logger_set_path("$logdir/groonga_query.log");
     }
 
     my $ctx = Groonga::API::ctx_open(GRN_CTX_USE_QL);
