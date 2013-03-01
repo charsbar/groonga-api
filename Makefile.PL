@@ -206,10 +206,6 @@ sub extract_apis {
   my $supported = 0;
 
   my %todo = map {("grn_$_" => 1)} (
-
-    # TODO: column
-    qw/column_index_update /,
-
     # TODO: obj
     qw/obj_columns obj_delete_by_id obj_get_value obj_path_by_id obj_reinit obj_set_value/,
 

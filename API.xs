@@ -63,3 +63,21 @@ ub(grn_obj * obj)
 
   OUTPUT:
     RETVAL
+
+MODULE = Groonga::API  PACKAGE = Groonga::API::posting
+
+PROTOTYPES: DISABLE
+
+grn_id
+rid(grn_posting *p)
+  CODE:
+    RETVAL = p->rid;
+  OUTPUT:
+    RETVAL
+
+grn_id
+sid(grn_posting *p)
+  CODE:
+    RETVAL = p->sid;
+  OUTPUT:
+    RETVAL
