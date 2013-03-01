@@ -24,18 +24,22 @@ our @EXPORT = (
 );
 
 our %TMPDIR;
+our $ROOT;
 
 sub tmpdir { 
   $TMPDIR{$$} ||= do {
-    my $root = file(__FILE__)->parent;
-    until ($root->file('Makefile.PL')->exists) {
-      my $parent = $root->parent;
-      if ($root eq $parent) {
-        BAIL_OUT "failed to find root";
+    $ROOT ||= do {
+      my $root = file(__FILE__)->parent;
+      until ($root->file('Makefile.PL')->exists) {
+        my $parent = $root->parent;
+        if ($root eq $parent) {
+          BAIL_OUT "failed to find root";
+        }
+        $root = $parent;
       }
-      $root = $parent;
-    }
-    my $dir = $root->subdir("tmp/$$");
+      $root;
+    };
+    my $dir = $ROOT->subdir("tmp/$$");
     $dir->remove if $dir->exists;
     $dir;
   };
@@ -64,6 +68,11 @@ sub ctx_test {
   grn_test(sub {
     if (Groonga::API::get_major_version() > 1) {
       Groonga::API::default_logger_set_max_level(GRN_LOG_DUMP);
+    }
+    if (Groonga::API::get_major_version() > 2) {
+      my $logdir = $ROOT ? $ROOT->subdir("tmp/log")->mkdir : ".";
+      Groonga::API::default_logger_set_path("$logdir/groonga.log");
+      Groonga::API::default_query_logger_set_path("$logdir/groonga_query.log");
     }
 
     my $ctx = Groonga::API::ctx_open(GRN_CTX_USE_QL);
