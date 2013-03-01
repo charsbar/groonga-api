@@ -170,7 +170,7 @@ ctx_test(sub {
 
   my $buf = ' ' x $key_size;
   my $len = Groonga::API::pat_get_key($ctx, $pat, $id, $buf, $key_size);
-  is $buf => "セ", "correct key";
+  is substr($buf, 0, $len) => "セ", "correct key";
 
   Groonga::API::pat_delete_with_sis($ctx, $pat, $id, undef);
 
@@ -285,7 +285,7 @@ sub _pat_search_test {
         my $pat_id = unpack 'L', $key;
         my $buf = ' ' x $key_size;
         $len = Groonga::API::pat_get_key($ctx, $pat, $pat_id, $buf, $key_size);
-        push @found, $buf;
+        push @found, substr($buf, 0, $len);
       }
       Groonga::API::hash_cursor_close($ctx, $cursor);
 
