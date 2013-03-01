@@ -227,9 +227,6 @@ sub extract_apis {
     # TODO: str (obsolete)
     qw/str_close str_open/,
 
-    # TODO: string
-    qw/string_get_encoding string_get_flags string_open string_set_normalized string_set_types/,
-
     # TODO: vector
     qw/vector_add_element vector_size/,
 
@@ -284,20 +281,8 @@ sub extract_apis {
     # int *
     qw/column_index/,
 
-    # short *
-    qw/string_set_checks/,
-
-    # unsigned int *
-    qw/string_get_original string_get_normalized/,
-
-    # const unsigned char *
-    qw/string_get_types/,
-
-    # const short *
-    qw/string_get_checks/,
-
     # const char **
-    qw/vector_get_element string_get_original string_get_normalized pat_scan/,
+    qw/vector_get_element pat_scan/,
 
     # void **
     qw/obj_get_values/,
@@ -366,6 +351,15 @@ sub extract_apis {
     },
     grn_table_sort_key_from_str => {'unsigned int *nkeys' => 'OUT unsigned int nkeys'},
     grn_index_cursor_next => {'grn_id *tid' => 'IN_OUT grn_id tid'},
+    grn_string_get_original => {
+      'const char **original' => 'OUT const char *original_out_length_length_in_bytes_out',
+      'unsigned int *length_in_bytes' => 'OUT unsigned int length_in_bytes_out',
+    },
+    grn_string_get_normalized => {
+      'const char **normalized' => 'OUT const char *normalized_out_length_length_in_bytes_out',
+      'unsigned int *length_in_bytes' => 'OUT unsigned int length_in_bytes_out',
+      'unsigned int *n_characters' => 'OUT unsigned int n_characters_out',
+    },
   );
 
   {
@@ -426,8 +420,11 @@ sub extract_apis {
     'long long int' => 'T_IV',
     'const void *' => 'T_PV_OR_UNDEF',
     'const char *' => 'T_PV_OR_UNDEF',
+    'const unsigned char *' => 'T_PV_OR_UNDEF',
     'char *' => 'T_PV_OR_UNDEF',
     'void *' => 'T_OPAQUE_',
+    'const short *' => 'T_OPAQUE_',
+    'short *' => 'T_OPAQUE_',
   );
 
   {

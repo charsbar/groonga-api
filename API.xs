@@ -23,6 +23,20 @@ EXPR_CREATE_FOR_QUERY(grn_ctx *ctx, grn_obj *table, OUT grn_obj *expr, OUT grn_o
   CODE:
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expr, var);
 
+unsigned char
+CHAR_IS_BLANK(unsigned char c)
+  CODE:
+    RETVAL = GRN_CHAR_IS_BLANK(c);
+  OUTPUT:
+    RETVAL
+
+unsigned char
+CHAR_TYPE(unsigned char c)
+  CODE:
+    RETVAL = GRN_CHAR_TYPE(c);
+  OUTPUT:
+    RETVAL
+
 MODULE = Groonga::API  PACKAGE = Groonga::API::Constants  PREFIX = grn_
 
 PROTOTYPES: DISABLE
