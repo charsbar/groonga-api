@@ -215,9 +215,6 @@ sub extract_apis {
     # TODO: expr
     qw/expr_add_var expr_alloc expr_append_const expr_append_const_int expr_append_const_str expr_append_obj expr_append_op expr_close expr_compile expr_create expr_exec expr_get_var expr_get_var_by_offset/,
 
-    # TODO: geo
-    qw/geo_cursor_next geo_cursor_open_in_rectangle geo_estimate_in_rectangle geo_select_in_rectangle/,
-
     # TODO: output_envelope
     qw/output_envelope/,
 
