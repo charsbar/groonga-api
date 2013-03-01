@@ -75,7 +75,7 @@ db_test(sub {
       my ($rid, $sid) = ($posting->rid, $posting->sid);
       note "rid: $rid, sid: $sid";
     }
-    Groonga::API::obj_unlink($geo_cursor);
+    Groonga::API::obj_unlink($ctx, $geo_cursor);
   }
 
   Groonga::API::obj_unlink($ctx, $index_column);
