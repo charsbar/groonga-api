@@ -218,9 +218,6 @@ sub extract_apis {
     # TODO: output_envelope
     qw/output_envelope/,
 
-    # TODO: plugin
-    qw/plugin_register plugin_register_by_path/,
-
     # TODO: str (obsolete)
     qw/str_close str_open/,
 
