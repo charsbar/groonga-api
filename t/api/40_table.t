@@ -127,6 +127,18 @@ table_column_test(sub {
   }
 
   {
+    my $res = Groonga::API::obj_open($ctx, GRN_PVECTOR, 0, GRN_DB_OBJECT);
+    my $rc = Groonga::API::obj_columns($ctx, $table, "*", bytes::length("*"), $res);
+    is $rc => GRN_SUCCESS, "got columns";
+    my $first_col = Groonga::API::PTR_VALUE_AT($res, 0);
+    ok defined $first_col, "first column";
+
+    my $bulk = Groonga::API::obj_open($ctx, GRN_BULK, 0, GRN_DB_TEXT);
+    Groonga::API::obj_get_value($ctx, $first_col, 1, $bulk);
+    is $bulk->ub->{head} => "text1", "correct column value";
+  }
+
+  {
     my $id = Groonga::API::obj_get_range($ctx, $column);
     is $id => GRN_DB_SHORT_TEXT, "correct range";
   }

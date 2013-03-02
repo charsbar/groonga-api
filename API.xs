@@ -37,6 +37,13 @@ CHAR_TYPE(unsigned char c)
   OUTPUT:
     RETVAL
 
+grn_obj *
+PTR_VALUE_AT(grn_obj * obj, unsigned int offset)
+  CODE:
+    RETVAL = GRN_PTR_VALUE_AT(obj, offset);
+  OUTPUT:
+    RETVAL
+
 MODULE = Groonga::API  PACKAGE = Groonga::API::Constants  PREFIX = grn_
 
 PROTOTYPES: DISABLE
