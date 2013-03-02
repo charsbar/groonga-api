@@ -206,65 +206,8 @@ sub extract_apis {
   my $supported = 0;
 
   my %todo = map {("grn_$_" => 1)} (
-    # TODO: obj
-    qw/obj_delete_by_id obj_path_by_id/,
-
-    # TODO: array
-    qw/array_push array_pull/,
-
-    # TODO: expr
-    qw/expr_add_var expr_alloc expr_append_const expr_append_const_int expr_append_const_str expr_append_obj expr_append_op expr_close expr_compile expr_create expr_exec expr_get_var expr_get_var_by_offset/,
-
-    # TODO: output_envelope
-    qw/output_envelope/,
-
-    # TODO: str (obsolete)
-    qw/str_close str_open/,
-
-    # TODO: vector
-    qw/vector_add_element vector_size/,
-
-    # TODO: util?
-    qw/charlen time_now/,
-
-    # TODO: ctx_output
-    qw/ctx_output_array_close ctx_output_array_open ctx_output_bool ctx_output_cstr ctx_output_float ctx_output_int32 ctx_output_int64 ctx_output_map_close ctx_output_map_open ctx_output_str/,
-
-    # TODO: db
-    qw/db_touch/,
-
-    # grn_proc_func
-    qw/ctx_set_finalizer proc_create obj_set_finalizer/,
-
-    # grn_expr_var
-    qw/proc_create proc_get_info/,
-
-    # grn_id * (short int *)
-    qw/vector_get_element/,
-
-    # grn_table_group_result *
-    qw/table_group/,
-
-    # get_hook_entry
-    qw/obj_add_hook obj_get_nhooks obj_get_hook obj_delete_hook/,
-
-    # grn_snip_mapping *
-    qw/snip_open expr_snip/,
-
-    # grn_snip
-    qw/snip_open snip_close snip_add_cond snip_exec snip_get_result expr_snip/,
-
-    # grn_query_logger *
-    qw/query_logger_set/,
-
-    # grn_object_format *
-    qw/output_obj ctx_output_obj/,
-
     # grn_user_data *
     qw/obj_user_data/,
-
-    # grn_logger *
-    qw/logger_set/,
 
     # grn_ctx_info *
     qw/ctx_info_get/,
@@ -275,24 +218,58 @@ sub extract_apis {
     # int *
     qw/column_index/,
 
-    # const char **
-    qw/vector_get_element pat_scan/,
+    # TODO: vector
+    qw/vector_size vector_add_element vector_get_element/,
 
-    # void **
+    # grn_table_group_result *
+    qw/table_group/,
+
+    # TODO: db
+    qw/db_touch/,
+
+    # TODO: void **
     qw/obj_get_values/,
 
-    # functions
+    # TODO: const char **
+    qw/pat_scan/,
+
+    # TODO: expr
+    qw/expr_add_var expr_alloc expr_append_const expr_append_const_int expr_append_const_str expr_append_obj expr_append_op expr_close expr_compile expr_create expr_exec expr_get_var expr_get_var_by_offset/,
+
+    # TODO: proc
+    qw/proc_create proc_get_info/,
+    qw/proc_get_hook_local_data proc_get_ctx_local_data proc_call_next/,
+    qw/ctx_set_finalizer proc_create obj_set_finalizer/,
+
+    # get_hook_entry
+    qw/obj_add_hook obj_get_nhooks obj_get_hook obj_delete_hook/,
+
+    # TODO: callbacks
+    qw/array_push array_pull/,
     qw/ctx_recv_handler_set/,
 
-    # procs
-    qw/proc_get_hook_local_data proc_get_ctx_local_data proc_call_next/,
+    # TODO: callbacks in struct
+    qw/logger_set query_logger_set/,
+
+    # TODO: snip (likely to be changed in groonga 3.0?)
+    qw/snip_open snip_close snip_add_cond snip_exec snip_get_result expr_snip/,
+
+    # TODO: util?
+    qw/charlen time_now/,
+
+    # TODO: for mroonga
+    qw/obj_delete_by_id obj_path_by_id/,
+
+    # TODO: output (probably no need to provide)
+    qw/output_envelope/,
+    qw/ctx_output_array_close ctx_output_array_open ctx_output_bool ctx_output_cstr ctx_output_float ctx_output_int32 ctx_output_int64 ctx_output_map_close ctx_output_map_open ctx_output_str/,
+    qw/output_obj ctx_output_obj/,
 
     # obsolete
-    qw/text_otoj/,
+    qw/str_close str_open text_otoj/,
 
     # removed or changed (1.x.x)
     qw/query_rest query_scan query_snip/,
-
   ); # end of %todo
 
   my %inout = (
