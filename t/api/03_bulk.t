@@ -54,6 +54,12 @@ ctx_test(sub {
     note explain $bulk->ub;
   }
 
+  {
+    my $rc = Groonga::API::obj_reinit($ctx, $bulk, GRN_DB_UINT32, 0);
+    is $rc => GRN_SUCCESS, "reinit";
+    is $bulk->header->{domain} => GRN_DB_UINT32, "correct domain";
+  }
+
   Groonga::API::bulk_fin($ctx, $bulk);
   Groonga::API::obj_unlink($ctx, $bulk);
 });
