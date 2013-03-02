@@ -22,4 +22,13 @@ ctx_test(sub {
   is $rc => GRN_SUCCESS, "set match escalation threshold";
 });
 
+ctx_test(sub {
+  my $ctx = shift;
+
+  my $rc = Groonga::API::ctx_info_get($ctx, my $info);
+  is $rc => GRN_SUCCESS, "got ctx_info";
+  note "COM STATUS: ".$info->com_status;
+  note "STAT: ".$info->stat;
+});
+
 done_testing;

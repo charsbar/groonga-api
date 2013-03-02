@@ -209,9 +209,6 @@ sub extract_apis {
     # grn_user_data *
     qw/obj_user_data/,
 
-    # grn_ctx_info *
-    qw/ctx_info_get/,
-
     # grn_search_optarg *
     qw/obj_search/,
 
@@ -386,6 +383,7 @@ sub extract_apis {
     'grn_table_delete_optarg *' => 'T_GRN_IGNORE',
     grn_info_type => 'T_ENUM',
     'grn_table_sort_key *' => 'T_GRN_TABLE_SORT_KEY',
+    'grn_ctx_info *' => 'T_GRN_CTX_INFO',
   );
   my %extra = (
     'long long int' => 'T_IV',
@@ -500,6 +498,17 @@ T_GRN_LOGGER_INFO
         \"$var\");
     }
   } STMT_END
+
+T_GRN_CTX_INFO
+  if (!SvOK($arg)) {
+    Newx($var, 1, grn_ctx_info);
+    sv_setref_pv($arg, \"Groonga::API::ctx_info\", (void*)$var);
+  } else if (sv_derived_from($arg, \"Groonga::API::ctx_info\")){
+    IV tmp = SvIV((SV*)SvRV($arg));
+    $var = INT2PTR($type, tmp);
+  }
+  else
+    croak(\"$var is not of type Groonga::API::ctx_info\")
 
 OUTPUT
 T_GRN_CTX

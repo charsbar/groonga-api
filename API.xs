@@ -102,3 +102,22 @@ sid(grn_posting *p)
     RETVAL = p->sid;
   OUTPUT:
     RETVAL
+
+MODULE = Groonga::API  PACKAGE = Groonga::API::ctx_info
+
+PROTOTYPES: DISABLE
+
+unsigned int
+com_status(grn_ctx_info *i)
+  CODE:
+    RETVAL = i->com_status;
+  OUTPUT:
+    RETVAL
+
+unsigned char
+stat(grn_ctx_info *i)
+  CODE:
+    RETVAL = i->stat;
+  OUTPUT:
+    RETVAL
+
