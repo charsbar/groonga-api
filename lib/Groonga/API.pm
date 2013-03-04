@@ -3,6 +3,7 @@ package Groonga::API;
 use strict;
 use warnings;
 use XSLoader;
+no bytes;
 
 our $VERSION = '0.01';
 
