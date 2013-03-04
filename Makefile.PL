@@ -12,6 +12,7 @@ my ($groonga_h, $inc, $libs) = check_env() or do {
 
 extract_constants($groonga_h);
 extract_apis($groonga_h);
+extract_bulk($groonga_h);
 
 my %params = (
   NAME          => 'Groonga::API',
@@ -387,6 +388,7 @@ sub extract_apis {
   );
   my %extra = (
     'long long int' => 'T_IV',
+    'long long unsigned int' => 'T_UV',
     'const void *' => 'T_PV_OR_UNDEF',
     'const char *' => 'T_PV_OR_UNDEF',
     'const unsigned char *' => 'T_PV_OR_UNDEF',
@@ -533,3 +535,123 @@ T_OPAQUE_
 TYPEMAP
   }
 } # end of extract_apis
+
+sub extract_bulk {
+  my $groonga_h = shift;
+
+  my $h = do {
+    open my $fh, '<', $groonga_h or die "Can't open groonga.h: $!";
+    local $/;
+    <$fh>;
+  };
+
+  open my $out, '>', "$FindBin::Bin/bulk.inc" or die "Can't open bulk.inc: $!";
+
+  my %value_type = (
+    BOOL => 'unsigned char',
+    INT8 => 'char',
+    UINT8 => 'unsigned char',
+    INT16 => 'short',
+    UINT16 => 'unsigned short',
+    INT32 => 'int',
+    UINT32 => 'unsigned int',
+    INT64 => 'long long int',
+    UINT64 => 'long long unsigned int',
+    FLOAT => 'double',
+    TIME => 'long long int',
+    RECORD => 'grn_id',
+    PTR => 'grn_obj *',
+    TEXT => 'char *',
+    SHORT_TEXT => '',
+    LONG_TEXT => '',
+  );
+
+  {
+    my @init = $h =~ /#define GRN_([A-Z0-9_]+)_INIT\(/g;
+    for (@init) {
+      next unless exists $value_type{$_};
+      if ($_ eq 'PTR') {
+        print $out <<"END";
+SV *
+${_}_INIT(grn_obj *obj, unsigned int flags, grn_id domain)
+  CODE:
+    GRN_${_}_INIT(obj, flags, domain);
+    XSRETURN_YES;
+
+END
+      } else {
+        print $out <<"END";
+SV *
+${_}_INIT(grn_obj *obj, unsigned int flags)
+  CODE:
+    GRN_${_}_INIT(obj, flags);
+    XSRETURN_YES;
+
+END
+      }
+    }
+  }
+
+  {
+    my @set = $h =~ /#define GRN_([A-Z0-9_]+)_SET\(/g;
+    for (@set) {
+      next unless $value_type{$_};
+      my $s = $_ eq "TEXT" ? "S" : "";
+      print $out <<"END";
+SV *
+${_}_SET$s(grn_ctx *ctx, grn_obj *obj, $value_type{$_} value)
+  CODE:
+    GRN_${_}_SET$s(ctx, obj, value);
+    XSRETURN_YES;
+
+END
+    }
+  }
+
+  {
+    my @set_at = $h =~ /#define GRN_([A-Z0-9_]+)_SET_AT\(/g;
+    for (@set_at) {
+      next unless $value_type{$_};
+      print $out <<"END";
+SV *
+${_}_SET_AT(grn_ctx *ctx, grn_obj *obj, unsigned int offset, $value_type{$_} value)
+  CODE:
+    GRN_${_}_SET_AT(ctx, obj, offset, value);
+    XSRETURN_YES;
+
+END
+    }
+  }
+
+  {
+    my @value = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE\(/g;
+    for (@value) {
+      next unless $value_type{$_};
+      print $out <<"END";
+$value_type{$_}
+${_}_VALUE(grn_obj *obj)
+  CODE:
+    RETVAL = GRN_${_}_VALUE(obj);
+  OUTPUT:
+    RETVAL
+
+END
+    }
+  }
+
+  {
+    my @value_at = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE_AT\(/g;
+    for (@value_at) {
+      next unless $value_type{$_};
+      print $out <<"END";
+$value_type{$_}
+${_}_VALUE_AT(grn_obj *obj, unsigned int offset)
+  CODE:
+    RETVAL = GRN_${_}_VALUE_AT(obj, offset);
+  OUTPUT:
+    RETVAL
+
+END
+    }
+  }
+} # end of extract_bulk
