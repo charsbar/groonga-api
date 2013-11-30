@@ -271,6 +271,8 @@ sub extract_apis {
     # obsolete
     qw/str_close str_open text_otoj/,
 
+    qw/query_logger_info_set/,
+
     # removed or changed (1.x.x)
     qw/query_rest query_scan query_snip/,
   ); # end of %todo
