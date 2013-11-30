@@ -57,7 +57,7 @@ table_test(sub {
     my $bulk = Groonga::API::obj_open($ctx, GRN_BULK, 0, GRN_DB_TEXT);
     my $len = Groonga::API::hash_get_key2($ctx, $hash, 1, $bulk);
     ok $len, "key length: $len";
-    is substr($bulk->ub->{head} || '', 0, $len) => "key1", "correct key";
+    is substr(Groonga::API::TEXT_VALUE($bulk) || '', 0, $len) => "key1", "correct key";
     Groonga::API::bulk_fin($ctx, $bulk);
     Groonga::API::obj_unlink($ctx, $bulk);
   }

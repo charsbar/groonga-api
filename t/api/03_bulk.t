@@ -13,7 +13,7 @@ ctx_test(sub {
     my $str = "text";
     my $rc = Groonga::API::bulk_write($ctx, $bulk, $str, bytes::length($str));
     is $rc => GRN_SUCCESS, "written";
-    is $bulk->ub->{head} => $str, "written correctly";
+    is substr(Groonga::API::TEXT_VALUE($bulk), 0, Groonga::API::TEXT_LEN($bulk)) => $str, "written correctly";
   }
 
   {
@@ -50,7 +50,7 @@ ctx_test(sub {
     my $str = "new_text";
     my $rc = Groonga::API::bulk_write_from($ctx, $bulk, $str, 2, bytes::length($str));
     is $rc => GRN_SUCCESS, "written";
-    is $bulk->ub->{head} => "tenew_text", "written correctly";
+    is substr(Groonga::API::TEXT_VALUE($bulk), 0, Groonga::API::TEXT_LEN($bulk)) => "tenew_text", "written correctly";
     note explain $bulk->ub;
   }
 
@@ -75,7 +75,7 @@ ctx_test(sub {
     Groonga::API::bulk_reinit($ctx, $text, 0);
     my $rc = Groonga::API::text_itoa($ctx, $text, 10);
     is $rc => GRN_SUCCESS, "itoa";
-    is $text->ub->{head} => '10';
+    is substr(Groonga::API::TEXT_VALUE($text), 0, Groonga::API::TEXT_LEN($text)) => '10';
     note explain $text->ub;
     Groonga::API::bulk_fin($ctx, $text);
   }
@@ -155,7 +155,8 @@ ctx_test(sub {
     my $str = "http://foo.bar/?foo=bar";
     my $rc = Groonga::API::text_urlenc($ctx, $text, $str, bytes::length($str));
     is $rc => GRN_SUCCESS, "urlenc";
-    is $text->ub->{head} => "http%3A%2F%2Ffoo.bar%2F%3Ffoo%3Dbar";
+
+    is substr(Groonga::API::TEXT_VALUE($text), 0, Groonga::API::TEXT_LEN($text)) => "http%3A%2F%2Ffoo.bar%2F%3Ffoo%3Dbar";
     note explain $text->ub;
     Groonga::API::bulk_fin($ctx, $text);
   }
@@ -165,7 +166,8 @@ ctx_test(sub {
     my $str = q{<xml><foo bar="<baz>"></foo></xml>};
     my $rc = Groonga::API::text_escape_xml($ctx, $text, $str, bytes::length($str));
     is $rc => GRN_SUCCESS, "escape_xml";
-    is $text->ub->{head} => "&lt;xml&gt;&lt;foo bar=&quot;&lt;baz&gt;&quot;&gt;&lt;/foo&gt;&lt;/xml&gt;";
+
+    is substr(Groonga::API::TEXT_VALUE($text), 0, Groonga::API::TEXT_LEN($text)) => "&lt;xml&gt;&lt;foo bar=&quot;&lt;baz&gt;&quot;&gt;&lt;/foo&gt;&lt;/xml&gt;";
     note explain $text->ub;
     Groonga::API::bulk_fin($ctx, $text);
   }
@@ -174,6 +176,8 @@ ctx_test(sub {
     Groonga::API::bulk_reinit($ctx, $text, 0);
     my $rc = Groonga::API::text_time2rfc1123($ctx, $text, time);
     is $rc => GRN_SUCCESS, "time2rfc1123";
+    like substr(Groonga::API::TEXT_VALUE($text), 0, Groonga::API::TEXT_LEN($text)) => qr/^\w{3}, \d{1,2} \w{3} \d{4} \d{2}:\d{2}:\d{2}/;
+
     # TODO: hmm, needs to clear more explicitly?
     note explain $text->ub;
     Groonga::API::bulk_fin($ctx, $text);

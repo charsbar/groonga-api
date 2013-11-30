@@ -135,7 +135,7 @@ table_column_test(sub {
 
     my $bulk = Groonga::API::obj_open($ctx, GRN_BULK, 0, GRN_DB_TEXT);
     Groonga::API::obj_get_value($ctx, $first_col, 1, $bulk);
-    is $bulk->ub->{head} => "text1", "correct column value";
+    is Groonga::API::TEXT_VALUE($bulk) => "text1", "correct column value";
   }
 
   {
@@ -145,7 +145,7 @@ table_column_test(sub {
 
   {
     my $value = Groonga::API::obj_get_value($ctx, $column, 1, undef);
-    is $value->ub->{head} => "text1", "correct column value";
+    is Groonga::API::TEXT_VALUE($value) => "text1", "correct column value";
   }
 
   {
@@ -157,7 +157,7 @@ table_column_test(sub {
 
   {
     my $value = Groonga::API::obj_get_value($ctx, $column, 1, undef);
-    is $value->ub->{head} => "new_text1", "correct column value";
+    is Groonga::API::TEXT_VALUE($value) => "new_text1", "correct column value";
   }
 });
 
