@@ -37,6 +37,7 @@ my %params = (
     },
   },
   test => {TESTS => 't/*.t t/*/*.t'},
+  clean => {FILES => '*.inc *.old'},
 );
 
 $params{INC}  = $inc  if $inc;
