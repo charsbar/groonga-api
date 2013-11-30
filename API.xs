@@ -37,6 +37,13 @@ CHAR_TYPE(unsigned char c)
   OUTPUT:
     RETVAL
 
+unsigned int
+TEXT_LEN(grn_obj *bulk)
+  CODE:
+    RETVAL = GRN_TEXT_LEN(bulk);
+  OUTPUT:
+    RETVAL
+
 INCLUDE: bulk.inc
 
 MODULE = Groonga::API  PACKAGE = Groonga::API::Constants  PREFIX = grn_
