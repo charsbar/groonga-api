@@ -2,10 +2,14 @@ package Groonga::API;
 
 use strict;
 use warnings;
+use base 'Exporter';
+use Groonga::API::Exports;
 use XSLoader;
 no bytes;
 
 our $VERSION = '0.01';
+our @EXPORT_OK = @Groonga::API::Exports::EXPORT_OK;
+our %EXPORT_TAGS = %Groonga::API::Exports::EXPORT_TAGS;
 
 XSLoader::load(__PACKAGE__, $VERSION);
 

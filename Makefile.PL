@@ -12,9 +12,11 @@ my ($groonga_h, $inc, $libs) = check_env() or do {
   exit(0);  # N/A
 };
 
+my @export_ok;
 extract_constants($groonga_h);
 extract_apis($groonga_h);
 extract_bulk($groonga_h);
+write_export(\@export_ok);
 
 my %params = (
   NAME          => 'Groonga::API',
@@ -356,6 +358,8 @@ sub extract_apis {
       }
       $decl =~ s/\s+[A-Z][A-Z_]+\([0-9]+\);$/;/;
       my ($name) = $decl =~ /^([^(]+)/;
+      (my $export_name = $name) =~ s/^grn_//;
+      push @export_ok, $export_name;
       if ($inout{$name}) {
         if (ref $inout{$name}) {
           for (keys %{$inout{$name}}) {
@@ -582,6 +586,7 @@ sub extract_bulk {
     my @init = $h =~ /#define GRN_([A-Z0-9_]+)_INIT\(/g;
     for (@init) {
       next unless exists $value_type{$_};
+      push @export_ok, $_."_INIT";
       if ($_ eq 'PTR') {
         print $out <<"END";
 SV *
@@ -609,6 +614,7 @@ END
     for (@set) {
       next unless $value_type{$_};
       my $s = $_ eq "TEXT" ? "S" : "";
+      push @export_ok, $_."_SET$s";
       print $out <<"END";
 SV *
 ${_}_SET$s(grn_ctx *ctx, grn_obj *obj, $value_type{$_} value)
@@ -624,6 +630,7 @@ END
     my @set_at = $h =~ /#define GRN_([A-Z0-9_]+)_SET_AT\(/g;
     for (@set_at) {
       next unless $value_type{$_};
+      push @export_ok, $_."_SET_AT";
       print $out <<"END";
 SV *
 ${_}_SET_AT(grn_ctx *ctx, grn_obj *obj, unsigned int offset, $value_type{$_} value)
@@ -639,6 +646,7 @@ END
     my @value = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE\(/g;
     for (@value) {
       next unless $value_type{$_};
+      push @export_ok, $_."_VALUE";
       print $out <<"END";
 $value_type{$_}
 ${_}_VALUE(grn_obj *obj)
@@ -655,6 +663,7 @@ END
     my @value_at = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE_AT\(/g;
     for (@value_at) {
       next unless $value_type{$_};
+      push @export_ok, $_."_VALUE_AT";
       print $out <<"END";
 $value_type{$_}
 ${_}_VALUE_AT(grn_obj *obj, unsigned int offset)
@@ -667,3 +676,53 @@ END
     }
   }
 } # end of extract_bulk
+
+sub write_export {
+  my $export_ok = shift;
+  push @$export_ok, qw/
+    get_major_version
+    EXPR_CREATE_FOR_QUERY
+    CHAR_TYPE CHAR_IS_BLANK 
+    TEXT_LEN
+  /;
+
+  my %tags = (all => \@$export_ok);
+
+  {
+    open my $out, '>', "$FindBin::Bin/lib/Groonga/API/Exports.pm" or die "Can't open Exports.pm";
+    $export_ok = join " ", sort @$export_ok;
+    my $export_tags = join ",\n  ",
+      map {"$_ => [qw/" . join(" ", sort @{$tags{$_} || []}) ."/]"}
+      sort keys %tags;
+
+    print $out <<"END";
+package Groonga::API::Exports;
+use strict;
+use warnings;
+our \@EXPORT_OK = qw($export_ok);
+our \%EXPORT_TAGS = (
+  $export_tags
+);
+1;
+
+__END__
+
+=head1 NAME
+
+Groonga::API::Exports
+
+=head1 AUTHOR
+
+Kenichi Ishigaki, E<lt>ishigaki\@cpan.orgE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2013 by Kenichi Ishigaki.
+
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=cut
+END
+  }
+} # end of write_export

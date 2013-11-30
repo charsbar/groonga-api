@@ -26,4 +26,5 @@ MYMETA
 \.bs$
 \.inc$
 lib/Groonga/API/Constants.pm
+lib/Groonga/API/Exports.pm
 typemap

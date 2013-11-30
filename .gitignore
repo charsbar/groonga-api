@@ -21,3 +21,4 @@ Makefile
 db/
 typemap
 lib/Groonga/API/Constants.pm
+lib/Groonga/API/Exports.pm
