@@ -7,7 +7,7 @@ use Groonga::API::Exports;
 use XSLoader;
 no bytes;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our @EXPORT_OK = @Groonga::API::Exports::EXPORT_OK;
 our %EXPORT_TAGS = %Groonga::API::Exports::EXPORT_TAGS;
 
