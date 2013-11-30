@@ -336,6 +336,10 @@ sub extract_apis {
       'unsigned int *length_in_bytes' => 'OUT unsigned int length_in_bytes_out',
       'unsigned int *n_characters' => 'OUT unsigned int n_characters_out',
     },
+    grn_table_get_subrecs => {
+      'grn_id *subrecbuf' => 'OUT grn_id subrecbuf',
+      'int *scorebuf' => 'OUT int scorebuf',
+    },
   );
 
   {
