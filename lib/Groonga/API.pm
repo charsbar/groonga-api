@@ -20,15 +20,15 @@ __END__
 
 =head1 NAME
 
-Groonga::API - raw interface to groonga
+Groonga::API - raw interface to Groonga
 
 =head1 DESCRIPTION
 
-Groonga::API is a very B<thin> wrapper of groonga C APIs. All it does is to map types, and it's not meant to be used by a casual perl user. Try L<Ploonga> for ordinary use.
+Groonga::API is a very B<thin> wrapper of Groonga C APIs. All it does is to map types, and it's not meant to be used by a casual perl user. Try L<Ploonga> for ordinary use.
 
-If you really need to do something that can't be done with a standard groonga client, welcome. As this doesn't expose all of the "public" APIs yet, if you want anything more, send me a typemap patch (see L<perlxstypemap> for a starter) and some tests (or ask the groonga developers to expose an appropriate API for your need).
+If you really need to do something that can't be done with a standard Groonga client, welcome. As this doesn't expose all of the "public" APIs yet, if you want anything more, send me a typemap patch (see L<perlxstypemap> for a starter) and some tests (or ask the Groonga developers to expose an appropriate API for your need).
 
-To use this module, you naturally need to read groonga.h and other groonga source files (reading online documents is not enough at all).
+To use this module, you naturally need to read groonga.h and other Groonga source files (reading online documents is not enough at all).
 
 =head1 SEE ALSO
 

@@ -93,7 +93,7 @@ __END__
 
 =head1 NAME
 
-Ploonga - (yet another) interface to groonga
+Ploonga - (yet another) interface to Groonga
 
 =head1 SYNOPSIS
 
@@ -111,7 +111,7 @@ Ploonga - (yet another) interface to groonga
     port => 10041,
   );
 
-  # You can pass whatever builtin groonga client accepts.
+  # You can pass whatever builtin Groonga client accepts.
   my $ret = $ploonga->do('table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText');
 
   # Extra args, instead of passing via stdin
@@ -131,9 +131,9 @@ Ploonga - (yet another) interface to groonga
 
 =head1 DESCRIPTION
 
-Unless you really want to do some complex stuff, this is the module you want to use to communicate with a groonga database/server. The interface is almost the same as the builtin groonga client. You simply don't need to quote commands nor decode json output by yourself.
+Unless you really want to do some complex stuff, this is the module you want to use to communicate with a Groonga database/server. The interface is almost the same as the builtin Groonga client. You simply don't need to quote commands nor decode json output by yourself.
 
-If you do need, try L<Groonga::API>, which provides raw interface to groonga C APIs.
+If you do need, try L<Groonga::API>, which provides raw interface to Groonga C APIs.
 
 =head1 METHODS
 
@@ -145,7 +145,7 @@ You can also set C<encoding> option to decode/encode when you send/receive data.
 
 =head2 do
 
-Takes a string expression which must contain a groonga command (and optional string arguments to send), and returns the result, which may be a scalar, or some complex data structure.
+Takes a string expression which must contain a Groonga command (and optional string arguments to send), and returns the result, which may be a scalar, or some complex data structure.
 
 =head2 ctx, db
 
