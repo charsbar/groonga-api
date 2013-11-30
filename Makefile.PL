@@ -3,6 +3,8 @@ use warnings;
 use FindBin;
 use ExtUtils::MakeMaker;
 
+my $win32 = ($^O eq 'MSWin32');
+
 # use Devel::CheckLib for sure?
 
 my ($groonga_h, $inc, $libs) = check_env() or do {
@@ -54,6 +56,9 @@ sub check_env {
   my ($groonga_h, $inc, $libs);
 
   my @incpath = qw(/usr/local/include /usr/include);
+  if ($win32 && eval {require Win32}) {
+    push @incpath, Win32::GetShortPathName('c:\Program Files\groonga\include');
+  }
   if ($ENV{GROONGA_INC}) {
     my $inc = $ENV{GROONGA_INC};
     $inc =~ s|^["']||;
@@ -73,7 +78,7 @@ sub check_env {
   return unless $groonga_h;
 
   (my $lib = $inc) =~ s|include$|lib|;
-  $libs = $ENV{GROONGA_LIBS} || "-L$lib -lgroonga";
+  $libs = $ENV{GROONGA_LIBS} || "-L$lib -l" . ($win32 ? "libgroonga.dll" : "groonga");
   $inc  = $ENV{GROONGA_INC}  || "-I$inc";
 
   return ($groonga_h, $inc, $libs);
