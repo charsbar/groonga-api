@@ -19,9 +19,10 @@ my %rest;
   for my $file (glob "$root/t/api/*.t") {
     next if $file =~ /rest\.t$/;
     my $test = do { open my $fh, '<', $file; local $/; <$fh> };
-    my @used = $test =~ /Groonga::API::([a-z0-9_]+)\(/g;
-    push @used, $test =~ /\&Groonga::API::([a-z0-9_]+)/g;
-    delete $rest{$_} for @used;
+    my $pre = $test =~ m!Groonga::API\s+qw/:all/! ? qr/(?:Groonga::API::|\b)/ : qr/Groonga::API::/;
+    for (keys %rest) {
+      delete $rest{$_} if $test =~ /$pre$_\(|\&$pre$_\b/;
+    }
   }
 }
 
