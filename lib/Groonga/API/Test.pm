@@ -8,6 +8,7 @@ use Path::Extended;
 use JSON::XS;
 use Groonga::API;
 use Groonga::API::Constants qw/:all/;
+use version;
 no bytes;
 
 our @EXPORT = (
@@ -17,6 +18,7 @@ our @EXPORT = (
     table_test table_column_test
     indexed_table_test
     load_into_table
+    version_ge
   /, 
   @Test::More::EXPORT, 
   @JSON::XS::EXPORT,
@@ -25,6 +27,11 @@ our @EXPORT = (
 
 our %TMPDIR;
 our $ROOT;
+
+sub version_ge {
+  my $version = shift;
+  version->parse('v'.Groonga::API::get_version()) >= version->parse('v'.$version) ? 1 : 0;
+}
 
 sub tmpdir { 
   $TMPDIR{$$} ||= do {

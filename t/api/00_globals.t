@@ -30,7 +30,7 @@ Groonga::API::init() and BAIL_OUT;
   is $rc => GRN_SUCCESS, "set default encoding";
 }
 
-if (Groonga::API::get_major_version() > 2) {
+if (version_ge("2.1.2")) {
   my $encoding = Groonga::API::encoding_to_string(GRN_ENC_UTF8);
   is $encoding => 'utf8', "stringify encoding";
 
@@ -55,14 +55,14 @@ if (Groonga::API::get_major_version() > 1) { # plugin suffix
   ok defined $suffix, "plugin suffix: $suffix";
 }
 
-if (Groonga::API::get_major_version() > 1) { # log level
+if (version_ge("2.0.6")) { # log level
   my $level = Groonga::API::default_logger_get_max_level();
   ok defined $level, "default logger max level: $level";
 
   Groonga::API::default_logger_set_max_level($level);
 }
 
-if (Groonga::API::get_major_version() > 1) { # query logger flags
+if (version_ge("2.0.9")) { # query logger flags
   my $flags = Groonga::API::default_query_logger_get_flags();
   ok defined $flags, "default query logger flags: $flags";
 

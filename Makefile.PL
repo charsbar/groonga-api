@@ -32,6 +32,7 @@ my %params = (
     'Test::Differences'   => 0,
     'Test::More'          => '0.88',
     'Test::UseAllModules' => '0.10',
+    'version'             => '0.77',
   },
   META_MERGE => {
     resources => {

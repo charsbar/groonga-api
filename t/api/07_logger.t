@@ -8,7 +8,7 @@ ctx_test(sub {
   my $ctx = shift;
 
   my $path = "./groonga.log";
-  if (Groonga::API::get_major_version() > 2) {
+  if (version_ge("2.1.2")) {
     unlink $path if -f $path;
     Groonga::API::default_logger_set_path($path);
     is Groonga::API::default_logger_get_path() => $path, "correct path";
@@ -38,20 +38,19 @@ ctx_test(sub {
 
   Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s', "test");
 
-  if (Groonga::API::get_major_version() > 2) {
+  if (version_ge("2.1.2")) {
     ok -s $path, "log file has been written";
     unlink $path if -f $path;
   }
 
-  Groonga::API::logger_reopen($ctx);
+  if (version_ge("2.1.2")) {
+    Groonga::API::logger_reopen($ctx);
 
-  Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s', "test");
+    Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s', "test");
 
-  if (Groonga::API::get_major_version() > 2) {
     ok -s $path, "log file has been written";
     unlink $path if -f $path;
   }
-
 });
 
 # TODO: GRN_LOG() support?

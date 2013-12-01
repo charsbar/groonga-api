@@ -2,6 +2,8 @@ use strict;
 use warnings;
 use Groonga::API::Test;
 
+plan skip_all => "grn_string was first introduced at 2.0.4" unless version_ge("2.0.4");
+
 db_test(sub {
   my ($ctx, $db) = @_;
 
