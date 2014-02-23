@@ -61,10 +61,11 @@ sub check_env {
 
   my @incpath = qw(/usr/local/include /usr/include);
   if ($win32 && eval {require Win32}) {
-    push @incpath, Win32::GetShortPathName('c:\Program Files\groonga\include');
+    my $path = Win32::GetShortPathName('c:\Program Files\groonga\include');
+    push @incpath, $path if $path;
   }
   if ($ENV{GROONGA_INC}) {
-    my $inc = $ENV{GROONGA_INC};
+    $inc = $ENV{GROONGA_INC};
     $inc =~ s|^["']||;
     $inc =~ s|["']$||;
     $inc =~ s/^\-I//;
