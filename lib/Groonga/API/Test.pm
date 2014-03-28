@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base 'Exporter';
 use Test::More;
-use Path::Extended;
+use Path::Tiny;
 use JSON::XS;
 use Groonga::API;
 use Groonga::API::Constants qw/:all/;
@@ -36,8 +36,8 @@ sub version_ge {
 sub tmpdir { 
   $TMPDIR{$$} ||= do {
     $ROOT ||= do {
-      my $root = file(__FILE__)->parent;
-      until ($root->file('Makefile.PL')->exists) {
+      my $root = path(__FILE__)->parent;
+      until ($root->child('Makefile.PL')->exists) {
         my $parent = $root->parent;
         if ($root eq $parent) {
           BAIL_OUT "failed to find root";
@@ -46,18 +46,19 @@ sub tmpdir {
       }
       $root;
     };
-    my $dir = $ROOT->subdir("tmp/$$");
-    $dir->remove if $dir->exists;
+    my $dir = $ROOT->child("tmp/$$");
+    $dir->remove_tree if $dir->exists;
     $dir;
   };
 }
 
-sub tmpfile { tmpdir()->file(shift)->stringify }
+sub tmpfile { tmpdir()->child(shift)->stringify }
 
 sub grn_test {
   my ($test, %opts) = @_;
 
-  my $tmpdir = tmpdir()->mkdir;
+  my $tmpdir = tmpdir();
+  $tmpdir->mkpath;
 
   Groonga::API::init() and BAIL_OUT;
 
@@ -66,7 +67,7 @@ sub grn_test {
 
   Groonga::API::fin();
 
-  $tmpdir->remove;
+  $tmpdir->remove_tree;
 }
 
 sub ctx_test {
@@ -77,7 +78,8 @@ sub ctx_test {
       Groonga::API::default_logger_set_max_level(GRN_LOG_DUMP);
     }
     if (Groonga::API::get_major_version() > 2) {
-      my $logdir = $ROOT ? $ROOT->subdir("tmp/log")->mkdir : ".";
+      my $logdir = $ROOT ? $ROOT->child("tmp/log") : path(".");
+      $logdir->mkpath;
       Groonga::API::default_logger_set_path("$logdir/groonga.log");
     }
 
