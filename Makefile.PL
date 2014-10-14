@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FindBin;
-use ExtUtils::MakeMaker;
+use ExtUtils::MakeMaker::CPANfile;
 
 my $win32 = ($^O eq 'MSWin32');
 
@@ -29,15 +29,6 @@ my %params = (
   ABSTRACT_FROM => 'lib/Groonga/API.pm',
   LICENSE       => 'perl',
   OBJECT        => '$(O_FILES)',
-  PREREQ_PM     => {
-    'Exporter'            => 0,
-    'JSON::XS'            => 0,
-    'Path::Tiny'          => 0,
-    'Test::Differences'   => 0,
-    'Test::More'          => '0.88',
-    'Test::UseAllModules' => '0.10',
-    'version'             => '0.77',
-  },
   META_MERGE => {
     resources => {
       repository => 'https://github.com/charsbar/groonga-api',
@@ -49,10 +40,6 @@ my %params = (
 
 $params{INC}  = $inc  if $inc;
 $params{LIBS} = $libs if $libs;
-
-my $eumm = eval $ExtUtils::MakeMaker::VERSION;
-delete $params{LICENSE}          if $eumm < 6.31;
-delete $params{META_MERGE}       if $eumm < 6.46;
 
 WriteMakefile(%params);
 

@@ -1,6 +1,7 @@
 API.h
 API.xs
 Changes
+cpanfile
 lib/Groonga/API.pm
 lib/Groonga/API/Test.pm
 lib/Ploonga.pm
