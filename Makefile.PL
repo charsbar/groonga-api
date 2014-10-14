@@ -12,6 +12,10 @@ my ($groonga_h, $inc, $libs) = check_env() or do {
   exit(0);  # N/A
 };
 
+print "Found groonga.h: $groonga_h\n";
+print "INC: $inc\n";
+print "LIBS: $libs\n";
+
 my @export_ok;
 extract_constants($groonga_h);
 extract_apis($groonga_h);
