@@ -20,7 +20,7 @@ sub write_files {
 sub check_env {
   my ($groonga_h, $inc, $libs);
 
-  my @incpath = qw(/usr/local/include /usr/include);
+  my @incpath = qw(/usr/local/include/groonga /usr/include/groonga);
   if ($win32 && eval {require Win32}) {
     my $path = Win32::GetShortPathName('c:\Program Files\groonga\include');
     push @incpath, $path if $path;
