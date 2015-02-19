@@ -4,7 +4,7 @@
 #include "ppport.h"
 #include "API.h"
 
-#include <groonga/groonga.h>
+#include <groonga.h>
 
 MODULE = Groonga::API  PACKAGE = Groonga::API  PREFIX = grn_
 
