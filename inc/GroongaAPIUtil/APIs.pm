@@ -111,7 +111,7 @@ my %inout = (
     'int *added' => 'OUT int added_out',
     'void **value' => 'NULL',
   },
-  grn_dat_get => {'void **value' => 'OUT void *value_out'},
+  grn_dat_get => {'void **value' => 'NULL'},
   grn_dat_get_key => {'void *keybuf' => 'void *keybuf_pv'},
   grn_dat_cursor_get_key => {'const void **key' => 'OUT const void *key_out_length_RETVAL'},
   grn_pat_add => {
