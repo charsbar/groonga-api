@@ -36,19 +36,25 @@ ctx_test(sub {
   $rc = Groonga::API::logger_pass($ctx, GRN_LOG_ERROR);
   ok $rc, "should still log ERROR message";
 
+  Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', 'test');
   Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s', "test");
+  Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s %s', "test", "test");
 
   if (version_ge("2.1.2")) {
     ok -s $path, "log file has been written";
+    note do {open my $fh, '<', $path; local $/; <$fh> };
     unlink $path if -f $path;
   }
 
   if (version_ge("2.1.2")) {
     Groonga::API::logger_reopen($ctx);
 
+    Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', 'test');
     Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s', "test");
+    Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s %s', "test", "test");
 
     ok -s $path, "log file has been written";
+    note do {open my $fh, '<', $path; local $/; <$fh> };
     unlink $path if -f $path;
   }
 });

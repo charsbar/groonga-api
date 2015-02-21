@@ -144,6 +144,8 @@ my %inout = (
     'int *scorebuf' => 'OUT int scorebuf',
   },
   grn_text_vprintf => {'va_list args' => '...'},
+  grn_logger_put => {'const char *fmt' => 'const char *format_with_va_list'},
+  grn_query_logger_put => {'const char *format' => 'const char *format_with_va_list'},
 );
 
 sub write_files {
@@ -321,6 +323,22 @@ T_PV_OR_UNDEF
     $var = NULL;
   } else {
     $var = ($type)SvPV_nolen($arg);
+    ${
+      ($var eq 'format_with_va_list')
+        ? \qq[
+          SV *sv = newSV(0);
+          int sv_max = items - $argoff - 1;
+          SV * args[sv_max];
+          int i;
+          bool do_taint = FALSE;
+          for(i = 0; i < sv_max; i++) {
+            args[i] = ST($argoff + 1 + i);
+          }
+          sv_vsetpvfn(sv, $var, strlen($var), NULL, args, sv_max, &do_taint);
+          $var = ($type)SvPV_nolen(sv);
+        ]
+        : \qq[]
+    };
   }
 
 T_OPAQUE_

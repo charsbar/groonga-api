@@ -30,20 +30,26 @@ ctx_test(sub {
   $rc = Groonga::API::query_logger_pass($ctx, GRN_QUERY_LOG_COMMAND);
   ok $rc, "should still log COMMAND";
 
+  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', "command");
   Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s', "command");
+  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s %s', "command", "command");
 
   if (version_ge("2.1.2")) {
     ok -s $path, "log file has been written";
+    note do { open my $fh, '<', $path; local $/; <$fh> };
     unlink $path if -f $path;
   }
 
   if (version_ge("2.1.0")) {
     Groonga::API::query_logger_reopen($ctx); # 2.1.0
 
-    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s', "test");
+    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', "command");
+    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s', "command");
+    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s %s', "command", "command");
 
     if (version_ge("2.1.2")) {
       ok -s $path, "log file has been written";
+      note do { open my $fh, '<', $path; local $/; <$fh> };
       unlink $path if -f $path;
     }
   }
