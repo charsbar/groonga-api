@@ -20,6 +20,8 @@ my %value_type = (
   TEXT => 'char *',
   SHORT_TEXT => '',
   LONG_TEXT => '',
+  VALUE_FIX_SIZE => '',
+  VALUE_VAR_SIZE => '',
 );
 
 sub write {
@@ -37,7 +39,7 @@ sub extract {
   my @to_export;
 
   $data{init} = [];
-  my @init = $h =~ /#define GRN_([A-Z0-9_]+)_INIT\(/g;
+  my @init = $h =~ /#define GRN_([A-Z0-9_]+)_INIT[ \(]/g;
   for (@init) {
     next unless exists $value_type{$_};
     push @to_export, $_."_INIT";
@@ -45,7 +47,7 @@ sub extract {
   }
 
   $data{set} = [];
-  my @set = $h =~ /#define GRN_([A-Z0-9_]+)_SET\(/g;
+  my @set = $h =~ /#define GRN_([A-Z0-9_]+)_SET[ \(]/g;
   for (@set) {
     next unless $value_type{$_};
     my $s = $_ eq "TEXT" ? "S" : "";
@@ -54,7 +56,7 @@ sub extract {
   }
 
   $data{set_at} = [];
-  my @set_at = $h =~ /#define GRN_([A-Z0-9_]+)_SET_AT\(/g;
+  my @set_at = $h =~ /#define GRN_([A-Z0-9_]+)_SET_AT[ \(]/g;
   for (@set_at) {
     next unless $value_type{$_};
     push @to_export, $_."_SET_AT";
@@ -62,7 +64,7 @@ sub extract {
   }
 
   $data{value} = [];
-  my @value = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE\(/g;
+  my @value = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE[ \(]/g;
   for (@value) {
     next unless $value_type{$_};
     push @to_export, $_."_VALUE";
@@ -70,7 +72,7 @@ sub extract {
   }
 
   $data{value_at} = [];
-  my @value_at = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE_AT\(/g;
+  my @value_at = $h =~ /#define GRN_([A-Z0-9_]+)_VALUE_AT[ \(]/g;
   for (@value_at) {
     next unless $value_type{$_};
     push @to_export, $_."_VALUE_AT";
@@ -87,7 +89,7 @@ sub write_inc {
 
   open my $out, '>', "$dir/bulk.inc" or die "Can't open bulk.inc: $!";
   for (@{$data->{init}}) {
-    if ($_ eq 'PTR') {
+    if ($_ =~ /PTR|RECORD|FIX_SIZE|VAR_SIZE/) {
       print $out <<"END";
 SV *
 ${_}_INIT(grn_obj *obj, unsigned int flags, grn_id domain)
