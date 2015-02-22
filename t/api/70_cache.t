@@ -2,9 +2,8 @@ use strict;
 use warnings;
 use Groonga::API qw/:all/;
 use Groonga::API::Test;
-use version;
 
-plan skip_all => 'grn_cache was first introduced at 3.0.8' unless version->parse('v' . get_version()) >= version->parse('v3.0.8');
+plan skip_all => 'grn_cache was first introduced at 3.0.8' unless version_ge('3.0.8');
 
 ctx_test(sub {
   my $ctx = shift;
