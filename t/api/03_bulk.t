@@ -186,6 +186,21 @@ ctx_test(sub {
   Groonga::API::obj_unlink($ctx, $text);
 });
 
+ctx_test(sub {
+  my $ctx = shift;
+
+  my $text = Groonga::API::obj_open($ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  ok defined $text, "created a text";
+  is ref $text => "Groonga::API::obj", "correct object";
+
+  if (version_ge('4.0.3')) {
+    my $rc = Groonga::API::text_printf($ctx, $text, "%s %d", "test", 1);
+    is $rc => GRN_SUCCESS, "printf";
+    is substr(Groonga::API::TEXT_VALUE($text), 0, Groonga::API::TEXT_LEN($text)) => "test 1", "written correctly";
+    note substr(Groonga::API::TEXT_VALUE($text), 0, Groonga::API::TEXT_LEN($text));
+  }
+});
+
 # XXX: Groonga::API::text_urldec()
 
 done_testing;

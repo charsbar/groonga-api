@@ -143,7 +143,8 @@ my %inout = (
     'grn_id *subrecbuf' => 'OUT grn_id subrecbuf',
     'int *scorebuf' => 'OUT int scorebuf',
   },
-  grn_text_vprintf => {'va_list args' => '...'},
+  grn_text_printf => {'const char *format' => 'const char *format_with_va_list'},
+  grn_text_vprintf => {'const char *format' => 'const char *format_with_va_list'},
   grn_logger_put => {'const char *fmt' => 'const char *format_with_va_list'},
   grn_query_logger_put => {'const char *format' => 'const char *format_with_va_list'},
 );
