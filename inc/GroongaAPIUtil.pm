@@ -22,7 +22,7 @@ sub check_env {
 
   my @incpath = qw(/usr/local/include/groonga /usr/include/groonga);
   if ($win32 && eval {require Win32}) {
-    my $path = Win32::GetShortPathName('c:\Program Files\groonga\include');
+    my $path = Win32::GetShortPathName('c:\Program Files\groonga\include\groonga');
     push @incpath, $path if $path;
   }
   if ($ENV{GROONGA_INC}) {
@@ -56,7 +56,7 @@ sub check_env {
     }
   }
 
-  (my $lib = $inc) =~ s|include$|lib|;
+  (my $lib = $inc) =~ s|include([\\/]groonga)?$|lib|;
   $libs = $ENV{GROONGA_LIBS} || "-L$lib -l" . ($win32 ? "libgroonga.dll" : "groonga");
   $inc  = $ENV{GROONGA_INC}  || "-I$inc";
 
