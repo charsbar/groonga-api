@@ -54,40 +54,9 @@ INCLUDE: constants.inc
 
 MODULE = Groonga::API  PACKAGE = Groonga::API::ctx
 
-grn_rc
-rc(grn_ctx *ctx)
-  CODE:
-    RETVAL = ctx->rc;
-  OUTPUT:
-    RETVAL
+PROTOTYPES: DISABLE
 
-unsigned char
-errlvl(grn_ctx *ctx)
-  CODE:
-    RETVAL = ctx->errlvl;
-  OUTPUT:
-    RETVAL
-
-const char *
-errfile(grn_ctx *ctx)
-  CODE:
-    RETVAL = ctx->errfile;
-  OUTPUT:
-    RETVAL
-
-const char *
-errfunc(grn_ctx *ctx)
-  CODE:
-    RETVAL = ctx->errfunc;
-  OUTPUT:
-    RETVAL
-
-char *
-errbuf(grn_ctx *ctx)
-  CODE:
-    RETVAL = ctx->errbuf;
-  OUTPUT:
-    RETVAL
+INCLUDE: attr_ctx.inc
 
 MODULE = Groonga::API  PACKAGE = Groonga::API::obj
 
@@ -128,35 +97,10 @@ MODULE = Groonga::API  PACKAGE = Groonga::API::posting
 
 PROTOTYPES: DISABLE
 
-grn_id
-rid(grn_posting *p)
-  CODE:
-    RETVAL = p->rid;
-  OUTPUT:
-    RETVAL
-
-grn_id
-sid(grn_posting *p)
-  CODE:
-    RETVAL = p->sid;
-  OUTPUT:
-    RETVAL
+INCLUDE: attr_posting.inc
 
 MODULE = Groonga::API  PACKAGE = Groonga::API::ctx_info
 
 PROTOTYPES: DISABLE
 
-unsigned int
-com_status(grn_ctx_info *i)
-  CODE:
-    RETVAL = i->com_status;
-  OUTPUT:
-    RETVAL
-
-unsigned char
-stat(grn_ctx_info *i)
-  CODE:
-    RETVAL = i->stat;
-  OUTPUT:
-    RETVAL
-
+INCLUDE: attr_ctx_info.inc

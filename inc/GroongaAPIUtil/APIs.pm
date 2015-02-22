@@ -152,6 +152,7 @@ sub write_files {
   my $env = shift;
   my $res = extract($env);
   write_inc($env->{dir}, $res);
+  write_attrs($env->{dir}, $res);
   write_typemap($env->{dir}, $res);
 }
 
@@ -249,9 +250,37 @@ sub extract {
 
   push @{$env->{to_export} ||= []}, @to_export;
 
+  my @structs = $h =~ /struct\s+((?:\w+\s+)?{.+?}(?:\s+\w+)?);/gs;
+  my %attrs;
+  for my $struct (@structs) {
+    $struct =~ /(\w+\s+)?{(.+?)}(\s+\w+)?/gs;
+    my $name = $1 || $3;
+    my $def = $2;
+    ($name) = $name =~ /^\s*_?(\w+)\s*/;
+    next unless $name =~ /^grn_/;
+    unless ($known_types{"$name *"}) {
+      warn "UNKNOWN TYPE: $name *\n";
+      next;
+    }
+    my @defs =
+      map {s/;\s*$//; s/(\w+)\[.+?\]$/*$1/; $_}
+      grep {$_ ne '' && !/\(/}
+      split /\n/, $def;
+    for (@defs) {
+      my ($type, $attr) = /^\s*(.+?)\s*(\w+)$/;
+      next unless $type;
+      unless ($known_types{$type}) {
+        warn "UNKNOWN TYPE: $type ($name.$attr)";
+        next;
+      }
+      $attrs{$name}{$attr} = $type;
+    }
+  }
+
   return {
     apis => \@apis,
     types => \%types,
+    attrs => \%attrs,
   };
 }
 
@@ -265,6 +294,27 @@ sub write_inc {
       print $out "# $_->{type}\n# $_->{decl}\n\n";
     } else {
       print $out "$_->{type}\n$_->{decl}\n\n";
+    }
+  }
+}
+
+sub write_attrs {
+  my ($dir, $data) = @_;
+
+  for my $type (keys %{$data->{attrs}}) {
+    (my $name = $type) =~ s/^grn_//;
+    my $attrs = $data->{attrs}{$type};
+    open my $out, '>', "$dir/attr_$name.inc" or die "Can't open attr_$name.inc: $!";
+    for (sort keys %$attrs) {
+      print $out <<"END";
+$attrs->{$_}
+$_($type *$name)
+  CODE:
+    RETVAL = $name->$_;
+  OUTPUT:
+    RETVAL
+
+END
     }
   }
 }
