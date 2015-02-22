@@ -4,8 +4,8 @@ use Groonga::API::Test;
 
 plan skip_all => 'requires groonga version >= 2.0.9' unless version_ge("2.0.9");
 
-ctx_test(sub {
-  my $ctx = shift;
+db_test(sub {
+  my ($ctx, $db) = @_;
 
   my $path = "./groonga_query.log";
   if (version_ge("2.1.2")) {
@@ -30,9 +30,9 @@ ctx_test(sub {
   $rc = Groonga::API::query_logger_pass($ctx, GRN_QUERY_LOG_COMMAND);
   ok $rc, "should still log COMMAND";
 
-  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', "command");
-  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s', "command");
-  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s %s', "command", "command");
+  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, 'test', "command");
+  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, 'test', '%s', "command");
+  Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, 'test', '%s %s', "command", "command");
 
   if (version_ge("2.1.2")) {
     ok -s $path, "log file has been written";
@@ -43,9 +43,9 @@ ctx_test(sub {
   if (version_ge("2.1.0")) {
     Groonga::API::query_logger_reopen($ctx); # 2.1.0
 
-    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', "command");
-    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s', "command");
-    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, __FILE__, __LINE__, 'test', '%s %s', "command", "command");
+    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, 'test', "command");
+    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, 'test', '%s', "command");
+    Groonga::API::query_logger_put($ctx, GRN_QUERY_LOG_COMMAND, 'test', '%s %s', "command", "command");
 
     if (version_ge("2.1.2")) {
       ok -s $path, "log file has been written";
