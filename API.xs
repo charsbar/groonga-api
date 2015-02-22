@@ -52,6 +52,43 @@ PROTOTYPES: DISABLE
 
 INCLUDE: constants.inc
 
+MODULE = Groonga::API  PACKAGE = Groonga::API::ctx
+
+grn_rc
+rc(grn_ctx *ctx)
+  CODE:
+    RETVAL = ctx->rc;
+  OUTPUT:
+    RETVAL
+
+unsigned char
+errlvl(grn_ctx *ctx)
+  CODE:
+    RETVAL = ctx->errlvl;
+  OUTPUT:
+    RETVAL
+
+const char *
+errfile(grn_ctx *ctx)
+  CODE:
+    RETVAL = ctx->errfile;
+  OUTPUT:
+    RETVAL
+
+const char *
+errfunc(grn_ctx *ctx)
+  CODE:
+    RETVAL = ctx->errfunc;
+  OUTPUT:
+    RETVAL
+
+char *
+errbuf(grn_ctx *ctx)
+  CODE:
+    RETVAL = ctx->errbuf;
+  OUTPUT:
+    RETVAL
+
 MODULE = Groonga::API  PACKAGE = Groonga::API::obj
 
 PROTOTYPES: DISABLE
