@@ -344,7 +344,7 @@ T_GRN_CTX
 
 T_GRN_OBJ
   if (!SvOK($arg)) {
-    $var = NULL;
+    ${$var eq 'new_obj' ? \qq{Newx($var, 1, grn_obj); sv_setref_pv($arg, \"Groonga::API::obj\", (void*)$var);} : \qq{$var = NULL;}};
   } else if (sv_derived_from($arg, \"${(my $t=$type)=~s/^grn_/Groonga::API::/;$t=~s/\s*\*+$//;\$t}\")){
     IV tmp = SvIV((SV*)SvRV($arg));
     $var = INT2PTR($type, tmp);

@@ -22,6 +22,7 @@ my %value_type = (
   LONG_TEXT => '',
   VALUE_FIX_SIZE => '',
   VALUE_VAR_SIZE => '',
+  VOID => '',
 );
 
 sub write {
@@ -92,18 +93,27 @@ sub write_inc {
     if ($_ =~ /PTR|RECORD|FIX_SIZE|VAR_SIZE/) {
       print $out <<"END";
 SV *
-${_}_INIT(grn_obj *obj, unsigned int flags, grn_id domain)
+${_}_INIT(grn_obj *new_obj, unsigned int flags, grn_id domain)
   CODE:
-    GRN_${_}_INIT(obj, flags, domain);
+    GRN_${_}_INIT(new_obj, flags, domain);
+    XSRETURN_YES;
+
+END
+    } elsif ($_ eq 'VOID') {
+      print $out <<"END";
+SV *
+${_}_INIT(grn_obj *new_obj)
+  CODE:
+    GRN_${_}_INIT(new_obj);
     XSRETURN_YES;
 
 END
     } else {
       print $out <<"END";
 SV *
-${_}_INIT(grn_obj *obj, unsigned int flags)
+${_}_INIT(grn_obj *new_obj, unsigned int flags)
   CODE:
-    GRN_${_}_INIT(obj, flags);
+    GRN_${_}_INIT(new_obj, flags);
     XSRETURN_YES;
 
 END
