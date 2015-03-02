@@ -58,13 +58,47 @@ PROTOTYPES: DISABLE
 
 INCLUDE: attr_ctx.inc
 
+grn_user_data *
+user_data(grn_ctx *ctx)
+  CODE:
+    RETVAL = &(ctx->user_data);
+  OUTPUT:
+    RETVAL
+
 MODULE = Groonga::API  PACKAGE = Groonga::API::obj
 
 PROTOTYPES: DISABLE
 
 HV*
-header(grn_obj * obj)
+header(grn_obj * obj, SV *value = NULL)
   CODE:
+    if (value && SvROK(value)) {
+      HV * const tmp_hv = (HV *)SvRV(value);
+      if (hv_exists(tmp_hv, "type", 4)) {
+        SV **sv;
+        if ((sv = hv_fetch(tmp_hv, "type", 4, 0)) != NULL) {
+          obj->header.type = SvIV(*sv);
+        }
+      }
+      if (hv_exists(tmp_hv, "impl_flags", 10)) {
+        SV **sv;
+        if ((sv = hv_fetch(tmp_hv, "impl_flags", 10, 0)) != NULL) {
+          obj->header.impl_flags = SvIV(*sv);
+        }
+      }
+      if (hv_exists(tmp_hv, "flags", 5)) {
+        SV **sv;
+        if ((sv = hv_fetch(tmp_hv, "flags", 5, 0)) != NULL) {
+          obj->header.flags = SvIV(*sv);
+        }
+      }
+      if (hv_exists(tmp_hv, "domain", 6)) {
+        SV **sv;
+        if ((sv = hv_fetch(tmp_hv, "domain", 6, 0)) != NULL) {
+          obj->header.domain = SvIV(*sv);
+        }
+      }
+    }
     HV* hv = newHV();
     if (obj) {
       hv_stores(hv, "type", newSViv(obj->header.type));
