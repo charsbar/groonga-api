@@ -79,7 +79,7 @@ my @typemap = (
 );
 
 my %inout = (
-  grn_table_add => {'int *added' => 'OUT int added_out'},
+  grn_table_add => {'int *added' => 'OUT int added_out_nullable'},
   grn_table_get_key => {'void *keybuf' => 'void *keybuf_pv'},
   grn_table_cursor_get_key => {'void **key' => 'OUT void *key_out_length_RETVAL'},
   grn_table_cursor_get_value => {'void **value' => 'OUT void *value_out_length_RETVAL'},
@@ -516,6 +516,9 @@ T_PV_OR_UNDEF
 
 T_OPAQUE_
   sv_setpvn($arg, (char *)${ $var =~ /_out(_length_.+)?$/ ? \$var : \qq{\&$var} }, ${ $var =~ /_length_(\w+)/ ? \qq{$1} : \qq{sizeof($var)}});
+
+T_IV
+  ${($var =~ /_nullable/) ? \qq{if (!SvREADONLY($arg))} : \qq{}} sv_setiv($arg, (IV)$var);
 
 T_GRN_USER_DATA
   sv_setiv($arg, (IV)$var);
