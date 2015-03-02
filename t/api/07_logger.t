@@ -63,6 +63,37 @@ ctx_test(sub {
   }
 });
 
+ctx_test(sub {
+  my $ctx = shift;
+
+  my $default_level = Groonga::API::default_logger_get_max_level();
+  note "default logger level: $default_level";
+
+  my $rc = Groonga::API::logger_set($ctx, {
+    max_level => $default_level,
+    flags => GRN_LOG_TIME|GRN_LOG_MESSAGE,
+    log => sub {
+      my ($ctx, $level, $timestamp, $title, $message, $location) = @_;
+      warn "LOG: $level $timestamp $title $message $location\n";
+    },
+    reopen => sub { warn "REOPEN\n"; },
+    fin => sub { warn "FIN\n"; },
+  });
+  is $rc => GRN_SUCCESS;
+
+  Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', 'test');
+  Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s', "test");
+  Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s %s', "test", "test");
+
+  if (version_ge("2.1.2")) {
+    Groonga::API::logger_reopen($ctx);
+
+    Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', 'test');
+    Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s', "test");
+    Groonga::API::logger_put($ctx, GRN_LOG_EMERG, __FILE__, __LINE__, 'test', '%s %s', "test", "test");
+  }
+});
+
 # TODO: GRN_LOG() support?
 
 done_testing;

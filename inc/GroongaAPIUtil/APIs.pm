@@ -56,6 +56,7 @@ my @typemap = (
   'grn_array *' => 'T_GRN_OBJ',
   'grn_hash *' => 'T_GRN_OBJ',
   'const grn_logger_info *' => 'T_GRN_LOGGER_INFO',
+  'const grn_logger *' => 'T_GRN_LOGGER',
   grn_id => 'T_U_INT',
   grn_bool => 'T_U_CHAR',
   grn_expr_flags => 'T_U_INT',
@@ -418,6 +419,59 @@ T_GRN_LOGGER_INFO
       logger_info.func_arg = NULL;
 
       $var = &logger_info;
+    }
+    else {
+      croak(\"%s: %s is not a hash reference\", 
+        ${$ALIAS?\q[GvNAME(CvGV(cv))]:\qq[\"$pname\"]},
+        \"$var\");
+    }
+  } STMT_END
+
+T_GRN_LOGGER
+  STMT_START {
+    SV* const xsub_tmp_sv = $arg;
+    SvGETMAGIC(xsub_tmp_sv);
+    if (SvROK(xsub_tmp_sv)) {
+      HV* const xsub_tmp_hv = (HV *)SvRV(xsub_tmp_sv);
+      static SV* funcs[2];
+      static grn_logger _logger;
+
+      if (hv_exists(xsub_tmp_hv, \"max_level\", 9)) {
+        SV **value;
+        if ((value = hv_fetch(xsub_tmp_hv, \"max_level\", 9, 0)) != NULL) {
+          _logger.max_level = SvIV(*value);
+        }
+      }
+      if (hv_exists(xsub_tmp_hv, \"flags\", 5)) {
+        SV **value;
+        if ((value = hv_fetch(xsub_tmp_hv, \"flags\", 5, 0)) != NULL) {
+          _logger.flags = SvIV(*value);
+        }
+      }
+      if (hv_exists(xsub_tmp_hv, \"log\", 3)) {
+        SV **value;
+        if ((value = hv_fetch(xsub_tmp_hv, \"log\", 3, 0)) != NULL && SvROK(*value)) {
+          funcs[0] = newSVsv(*value);
+          _logger.log = &_logger_log_dispatcher;
+        }
+      }
+      if (hv_exists(xsub_tmp_hv, \"reopen\", 6)) {
+        SV **value;
+        if ((value = hv_fetch(xsub_tmp_hv, \"reopen\", 6, 0)) != NULL && SvROK(*value)) {
+          funcs[1] = newSVsv(*value);
+          _logger.reopen = &_logger_reopen_dispatcher;
+        }
+      }
+      if (hv_exists(xsub_tmp_hv, \"fin\", 3)) {
+        SV **value;
+        if ((value = hv_fetch(xsub_tmp_hv, \"fin\", 3, 0)) != NULL && SvROK(*value)) {
+          funcs[2] = newSVsv(*value);
+          _logger.fin = &_logger_fin_dispatcher;
+        }
+      }
+      _logger.user_data = funcs;
+
+      $var = &_logger;
     }
     else {
       croak(\"%s: %s is not a hash reference\", 
