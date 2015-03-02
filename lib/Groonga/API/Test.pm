@@ -19,6 +19,7 @@ our @EXPORT = (
     indexed_table_test
     load_into_table
     version_ge
+    inspect_obj
   /, 
   @Test::More::EXPORT, 
   @JSON::XS::EXPORT,
@@ -218,6 +219,15 @@ sub load_into_table {
     undef, 0,
     undef, 0,
   );
+}
+
+sub inspect_obj {
+    my ($ctx, $obj) = @_;
+    return unless version_ge('4.0.8');
+    Groonga::API::TEXT_INIT(my $buf, GRN_DB_TEXT);
+    Groonga::API::inspect($ctx, $buf, $obj);
+    note substr(Groonga::API::TEXT_VALUE($buf), 0, Groonga::API::TEXT_LEN($buf));
+    Groonga::API::obj_unlink($ctx, $buf);
 }
 
 1;
