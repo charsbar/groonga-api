@@ -5,9 +5,6 @@ use warnings;
 
 my %todo = map {("grn_$_" => 1)} qw/
   text_vprintf
-  expr_add_var expr_get_var expr_get_var_by_offset expr_append_obj
-  expr_append_const expr_append_const_str expr_exec expr_alloc
-  expr_create expr_append_const_int
   proc_call_next proc_get_hook_local_data proc_get_ctx_local_data
 /;
 
