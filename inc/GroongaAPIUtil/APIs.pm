@@ -36,7 +36,7 @@ my %basic_types = ( # from ExtUtils::typemap
   'double' => 'T_DOUBLE',
   'bool' => 'T_BOOL',
 );
-my @typemap = (
+my %typemap = (
   'grn_ctx *' => 'T_GRN_CTX',
   'grn_obj *' => 'T_GRN_OBJ',
   'grn_pat *' => 'T_GRN_OBJ',
@@ -57,11 +57,11 @@ my @typemap = (
   'grn_hash *' => 'T_GRN_OBJ',
   'const grn_logger_info *' => 'T_GRN_LOGGER_INFO',
   'const grn_logger *' => 'T_GRN_LOGGER',
-  grn_id => 'T_U_INT',
-  grn_bool => 'T_U_CHAR',
-  grn_expr_flags => 'T_U_INT',
+  'grn_id' => 'T_U_INT',
+  'grn_bool' => 'T_U_CHAR',
+  'grn_expr_flags' => 'T_U_INT',
   'grn_table_delete_optarg *' => 'T_GRN_IGNORE',
-  grn_info_type => 'T_ENUM',
+  'grn_info_type' => 'T_ENUM',
   'grn_table_sort_key *' => 'T_GRN_TABLE_SORT_KEY',
   'grn_ctx_info *' => 'T_GRN_CTX_INFO',
   'grn_search_optarg *' => 'T_GRN_SEARCH_OPTARG',
@@ -165,12 +165,12 @@ sub extract {
   my @api_strings = $h =~ /\nGRN_API ([^;]+;)/gs;
   printf "Found %d APIs\n", scalar @api_strings;
 
-  my %known_types = (%basic_types, void => 1, @typemap);
+  my %known_types = (%basic_types, void => 1, %typemap);
   for (keys %{$env->{typedef} || {}}) {
     my $type = $env->{typedef}{$_};
     if ($type =~ /^T_/) {
       $known_types{$_} = $type;
-      push @typemap, ($_ => $type);
+      $typemap{$_} = $type;
     } elsif ($known_types{$type}) {
       $known_types{$_} = $known_types{$type};
     } elsif ($known_types{"$type *"}) {
@@ -324,9 +324,8 @@ sub write_typemap {
 
   open my $out, '>', "$dir/typemap" or die "Can't open typemap: $!";
   print $out "TYPEMAP\n";
-  for (my $i = 0; $i < @typemap; $i += 2) {
-    my ($type, $xs_type) = @typemap[$i, $i+1];
-    print $out $type, "\t", $xs_type, "\n";
+  for my $type (sort keys %typemap) {
+    print $out $type, "\t", $typemap{$type}, "\n";
   }
   print $out <<'TYPEMAP';
 
