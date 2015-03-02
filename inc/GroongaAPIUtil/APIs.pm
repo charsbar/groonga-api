@@ -63,6 +63,7 @@ my @typemap = (
   grn_info_type => 'T_ENUM',
   'grn_table_sort_key *' => 'T_GRN_TABLE_SORT_KEY',
   'grn_ctx_info *' => 'T_GRN_CTX_INFO',
+  'grn_search_optarg *' => 'T_GRN_SEARCH_OPTARG',
 
   'long long int' => 'T_IV',
   'long long unsigned int' => 'T_UV',
@@ -421,6 +422,55 @@ T_GRN_LOGGER_INFO
       croak(\"%s: %s is not a hash reference\", 
         ${$ALIAS?\q[GvNAME(CvGV(cv))]:\qq[\"$pname\"]},
         \"$var\");
+    }
+  } STMT_END
+
+T_GRN_SEARCH_OPTARG
+  STMT_START {
+    if (!SvOK($arg)) {
+      $var = NULL;
+    } else {
+      SV* const xsub_tmp_sv = $arg;
+      SvGETMAGIC(xsub_tmp_sv);
+      if (SvROK(xsub_tmp_sv)) {
+        HV* const xsub_tmp_hv = (HV *)SvRV(xsub_tmp_sv);
+        static grn_search_optarg search_optarg;
+
+        if (hv_exists(xsub_tmp_hv, \"mode\", 4)) {
+          SV **value;
+          if ((value = hv_fetch(xsub_tmp_hv, \"mode\", 4, 0)) != NULL) {
+            search_optarg.mode = (grn_operator)SvIV(*value);
+          }
+        }
+        if (hv_exists(xsub_tmp_hv, \"similarity_threshold\", 20)) {
+          SV **value;
+          if ((value = hv_fetch(xsub_tmp_hv, \"similarity_threshold\", 20, 0)) != NULL) {
+            search_optarg.similarity_threshold = SvIV(*value);
+          }
+        }
+        if (hv_exists(xsub_tmp_hv, \"max_interval\", 12)) {
+          SV **value;
+          if ((value = hv_fetch(xsub_tmp_hv, \"max_interval\", 12, 0)) != NULL) {
+            search_optarg.max_interval = SvIV(*value);
+          }
+        }
+        if (hv_exists(xsub_tmp_hv, \"max_size\", 8)) {
+          SV **value;
+          if ((value = hv_fetch(xsub_tmp_hv, \"max_size\", 8, 0)) != NULL) {
+            search_optarg.max_size = SvIV(*value);
+          }
+        }
+        /* TODO: callback support? */
+        search_optarg.weight_vector = NULL;
+        search_optarg.proc = NULL;
+
+        $var = &search_optarg;
+      }
+      else {
+        croak(\"%s: %s is not a hash reference\", 
+          ${$ALIAS?\q[GvNAME(CvGV(cv))]:\qq[\"$pname\"]},
+          \"$var\");
+      }
     }
   } STMT_END
 
