@@ -64,6 +64,7 @@ my @typemap = (
   'grn_table_sort_key *' => 'T_GRN_TABLE_SORT_KEY',
   'grn_ctx_info *' => 'T_GRN_CTX_INFO',
   'grn_search_optarg *' => 'T_GRN_SEARCH_OPTARG',
+  'grn_user_data *' => 'T_GRN_USER_DATA',
 
   'long long int' => 'T_IV',
   'long long unsigned int' => 'T_UV',
@@ -485,6 +486,17 @@ T_GRN_CTX_INFO
   else
     croak(\"$var is not of type Groonga::API::ctx_info\")
 
+T_GRN_USER_DATA
+  if (!SvOK($arg)) {
+    $var = NULL;
+  } else if (SvROK($arg)) {
+    IV tmp = SvIV((SV*)SvRV($arg));
+    $var = INT2PTR($type,tmp);
+  } else if (SvIOK($arg)) {
+    $var = ($type)SvIV($arg);
+  } else
+    croak(\"$var is not of type Groonga::API::user_data\")
+
 OUTPUT
 T_GRN_CTX
   sv_setref_pv($arg, \"Groonga::API::ctx\", (void*)$var);
@@ -504,6 +516,9 @@ T_PV_OR_UNDEF
 
 T_OPAQUE_
   sv_setpvn($arg, (char *)${ $var =~ /_out(_length_.+)?$/ ? \$var : \qq{\&$var} }, ${ $var =~ /_length_(\w+)/ ? \qq{$1} : \qq{sizeof($var)}});
+
+T_GRN_USER_DATA
+  sv_setiv($arg, (IV)$var);
 
 TYPEMAP
 }
