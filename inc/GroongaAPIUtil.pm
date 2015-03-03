@@ -48,13 +48,6 @@ sub check_env {
   print "Found groonga.h: $groonga_h\n";
 
   my $h = slurp($groonga_h);
-  if (my @includes = $h =~ m!#include "(groonga/[^"]+)"!g) {
-    for my $name (@includes) {
-      my $sub_h = slurp("$inc/$name");
-      $h =~ s/#include "$name"/$sub_h\n/;
-      print "included $inc/$name\n";
-    }
-  }
 
   (my $lib = $inc) =~ s|include([\\/]groonga)?$|lib|;
   $libs = $ENV{GROONGA_LIBS} || "-L$lib -l" . ($win32 ? "libgroonga.dll" : "groonga");
@@ -74,6 +67,20 @@ sub check_env {
 }
 
 sub slurp {
+  my $file = shift;
+  my $h = _slurp($file);
+  if (my @includes = $h =~ m!#include "(groonga/[^"]+)"!g) {
+    (my $dir = $file) =~ s![\\/]groonga\.h$!!;
+    for my $name (@includes) {
+      my $sub_h = _slurp("$dir/$name");
+      $h =~ s/#include "$name"/$sub_h\n/;
+      print "included $dir/$name\n";
+    }
+  }
+  $h;
+}
+
+sub _slurp {
   my $file = shift;
   open my $fh, '<', $file or die "Can't open $file: $!";
   local $/;
