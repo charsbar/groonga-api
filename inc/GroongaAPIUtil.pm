@@ -74,7 +74,7 @@ sub slurp {
     for my $name (@includes) {
       my $sub_h = _slurp("$dir/$name");
       $h =~ s/#include "$name"/$sub_h\n/;
-      print "included $dir/$name\n";
+      # print "included $dir/$name\n";
     }
   }
   $h;
