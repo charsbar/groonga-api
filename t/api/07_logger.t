@@ -17,9 +17,11 @@ ctx_test(sub {
   my $default_level = Groonga::API::default_logger_get_max_level();
   note "default logger level: $default_level";
 
-  Groonga::API::logger_set_max_level($ctx, $default_level);
-  my $level = Groonga::API::logger_get_max_level($ctx);
-  note "logger level: $level";
+  if (version_ge("3.0.3")) {
+    Groonga::API::logger_set_max_level($ctx, $default_level);
+    my $level = Groonga::API::logger_get_max_level($ctx);
+    note "logger level: $level";
+  }
 
   my $rc = Groonga::API::logger_pass($ctx, GRN_LOG_DUMP);
   ok $rc, "should log DUMP message";
