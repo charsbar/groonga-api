@@ -56,7 +56,9 @@ my %typemap = (
   'grn_array *' => 'T_GRN_OBJ',
   'grn_hash *' => 'T_GRN_OBJ',
   'const grn_logger_info *' => 'T_GRN_LOGGER_INFO',
+  'grn_logger_info *' => 'T_GRN_LOGGER_INFO',
   'const grn_logger *' => 'T_GRN_LOGGER',
+  'grn_logger *' => 'T_GRN_LOGGER',
   'grn_id' => 'T_U_INT',
   'grn_bool' => 'T_U_CHAR',
   'grn_expr_flags' => 'T_U_INT',
@@ -148,11 +150,23 @@ my %inout = (
   grn_query_logger_put => {'const char *format' => 'const char *format_with_va_list'},
 );
 
+my %funcs = (
+  array_pull_func => '',
+  array_push_func => '',
+  ctx_recv_handler_set_func => '',
+  logger_log => '((SV **)user_data)[0]',
+  logger_reopen => '((SV **)user_data)[1]',
+  logger_fin => '((SV **)user_data)[2]',
+  logger_info_func => '',
+  table_delete_optarg_func => '',
+);
+
 sub write_files {
   my $env = shift;
   my $res = extract($env);
   write_inc($env->{dir}, $res);
   write_attrs($env->{dir}, $res);
+  write_dispatchers($env->{dir}, $res);
   write_typemap($env->{dir}, $res);
 }
 
@@ -182,6 +196,7 @@ sub extract {
   my $supported = 0;
   my @to_export;
   my @apis;
+  my %dispatchers;
   for (@api_strings) {
     s/\s\s+/ /gs;
     s/\(void\)/()/g;
@@ -194,6 +209,7 @@ sub extract {
     $type =~ s/\s+$//;
     $decl =~ s/\s+[A-Z][A-Z_]+\([0-9]+\);$/;/;
     my ($name) = $decl =~ /^([^(]+)/;
+    my ($short_name) = $name =~ /^grn_(\w+)/;
 
     if ($inout{$name}) {
       if (ref $inout{$name}) {
@@ -209,7 +225,8 @@ sub extract {
     $args = '' unless defined $args;
 
     my @reasons;
-    if ($args =~ s/void\s*\(\*([^)]+)\)\(.+?\)/void *$1/g) {
+    while ($args =~ s/(\w+)\s*\(\*(\w+)\)\((.+?)\)/$1 *$2/) {
+      $dispatchers{"_${short_name}_${2}_dispatcher"} = {type => $1, args => $3, id => "${short_name}_${2}"};
       push @reasons, "has function $1";
       warn "HAS FUNC ($name): $1\n" if $env->{author};
     }
@@ -257,23 +274,25 @@ sub extract {
     my $name = $1 || $3;
     my $def = $2;
     ($name) = $name =~ /^\s*_?(\w+)\s*/;
-    next unless $name =~ /^grn_/;
+    next unless $name =~ /^grn_(\w+)/;
+    my $short_name = $1;
     unless ($known_types{"$name *"}) {
       warn "UNKNOWN TYPE: $name *\n";
       next;
     }
-    my @defs =
-      map {s/;\s*$//; s/(\w+)\[.+?\]$/*$1/; $_}
-      grep {$_ ne '' && !/\(/}
-      split /\n/, $def;
-    for (@defs) {
-      my ($type, $attr) = /^\s*(.+?)\s*(\w+)$/;
-      next unless $type;
-      unless ($known_types{$type}) {
-        warn "UNKNOWN TYPE: $type ($name.$attr)";
-        next;
+    for (split /;\s*/s, $def) {
+      if (/(\w+)\s*\(\*(\w+)\)\((.+?)\)/s) {
+        $dispatchers{"_${short_name}_${2}_dispatcher"} = {type => $1, args => $3, id => "${short_name}_${2}"};
+      } else {
+        s/(\w+)\[.+?\]$/*$1/;
+        my ($type, $attr) = /^\s*(.+?)\s*(\w+)$/;
+        next unless $type;
+        unless ($known_types{$type}) {
+          warn "UNKNOWN TYPE: $type ($name.$attr)";
+          next;
+        }
+        $attrs{$name}{$attr} = $type;
       }
-      $attrs{$name}{$attr} = $type;
     }
   }
 
@@ -281,6 +300,7 @@ sub extract {
     apis => \@apis,
     types => \%types,
     attrs => \%attrs,
+    dispatchers => \%dispatchers,
   };
 }
 
@@ -318,6 +338,107 @@ END
     }
   }
 }
+
+sub write_dispatchers {
+  my ($dir, $data) = @_;
+
+  open my $out, '>', "$dir/dispatcher.inc" or die "Can't open dispatcher.inc: $!";
+  for my $name (sort keys %{$data->{dispatchers}}) {
+    my $dispatcher = $data->{dispatchers}{$name};
+    my $dispatcher_type = $dispatcher->{type};
+    my $dispatcher_xstype = $dispatcher_type eq 'void' ? 'T_VOID' : $basic_types{$dispatcher_type} || $typemap{$dispatcher_type};
+    my $func = $funcs{$dispatcher->{id}} || '';
+    my @args;
+    for my $arg (split /,\s*/s, $dispatcher->{args}) {
+      my ($type, $name);
+      if ($basic_types{$arg} or $typemap{$arg}) {
+        $type = $arg;
+        $name = 'arg'.(scalar @args);
+        $arg .= ' ' unless $arg =~ /\*/;
+        $arg .= $name;
+      } else {
+        ($type = $arg) =~ s/\s*(\w+)$//;
+        $name = $1;
+      }
+      push @args, {arg => $arg, type => $type, name => $name};
+    }
+    my $arg_list = join ', ', map {$_->{arg}} @args;
+    print $out "/*\n" unless $func;
+    print $out <<"END";
+$dispatcher_type
+$name($arg_list)
+{
+    dTHX;
+    dSP;
+    int count;
+END
+
+    if ($dispatcher_xstype =~ /^T_IV/) {
+      print $out <<"END";
+    $dispatcher_type ret;
+END
+    }
+
+    print $out <<"END";
+    SV *func = $func;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+END
+
+    for my $arg (@args) {
+      my $xstype = $typemap{$arg->{type}} || $basic_types{$arg->{type}} or next;
+      if ((lc $xstype) =~ /^t_grn_(ctx|obj)/) {
+        print $out <<"END";
+    XPUSHs(sv_2mortal(sv_setref_pv(newSV(0), "Groonga::API::$1", (void*)$arg->{name})));
+END
+      } elsif ($xstype =~ /^T_(?:IV|CHAR|ENUM|BOOL)/) {
+        print $out <<"END";
+    XPUSHs(sv_2mortal(newSViv($arg->{name})));
+END
+      } elsif ($xstype =~ /^T_(?:UV|U_(?:INT|CHAR|SHORT))/) {
+        print $out <<"END";
+    XPUSHs(sv_2mortal(newSVuv($arg->{name})));
+END
+      } elsif ($xstype =~ /^T_(?:NV|FLOAT|DOUBLE)/) {
+        print $out <<"END";
+    XPUSHs(sv_2mortal(newSVnv($arg->{name})));
+END
+      } elsif ($xstype =~ /^T_PV/) {
+        print $out <<"END";
+    XPUSHs(sv_2mortal(newSVpv($arg->{name}, 0)));
+END
+      }
+    }
+
+    if ($dispatcher_xstype eq 'T_VOID') {
+      print $out <<"END";
+    PUTBACK;
+    count = call_sv(func, G_VOID|G_DISCARD);
+    FREETMPS;
+    LEAVE;
+}
+
+END
+    } elsif ($dispatcher_xstype =~ /^T_IV/) {
+      print $out <<"END";
+    PUTBACK;
+    count = call_sv(func, G_SCALAR);
+    SPAGAIN;
+    if (count != 1) croak("wrong number of return values");
+    ret = POPi;
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    return ret;
+}
+
+END
+    }
+    print $out "*/\n\n" unless $func;
+  }
+}
+
 
 sub write_typemap {
   my ($dir, $data) = @_;

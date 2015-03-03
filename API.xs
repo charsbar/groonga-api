@@ -3,70 +3,9 @@
 #include <XSUB.h>
 #include "ppport.h"
 #include "API.h"
+#include <groonga.h>
 
-void
-_logger_log_dispatcher(grn_ctx *ctx, grn_log_level level,
-              const char *timestamp, const char *title, const char *message,
-              const char *location, void *user_data)
-{
-    dTHX;
-    dSP;
-    int count;
-    SV *func = ((SV **)user_data)[0];
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    XPUSHs(sv_2mortal(sv_setref_pv(newSV(0), "Groonga::API::ctx", (void*)ctx)));
-    XPUSHs(sv_2mortal(newSViv(level)));
-    XPUSHs(sv_2mortal(newSVpv(timestamp, 0)));
-    XPUSHs(sv_2mortal(newSVpv(title, 0)));
-    XPUSHs(sv_2mortal(newSVpv(message, 0)));
-    XPUSHs(sv_2mortal(newSVpv(location, 0)));
-    PUTBACK;
-
-    count = call_sv(func, G_VOID|G_DISCARD);
-
-    FREETMPS;
-    LEAVE;
-}
-
-void
-_logger_reopen_dispatcher(grn_ctx *ctx, void *user_data)
-{
-    dTHX;
-    dSP;
-    int count;
-    SV *func = ((SV **)user_data)[1];
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    XPUSHs(sv_2mortal(sv_setref_pv(newSV(0), "Groonga::API::ctx", (void*)ctx)));
-    PUTBACK;
-
-    count = call_sv(func, G_VOID|G_DISCARD);
-
-    FREETMPS;
-    LEAVE;
-}
-
-void
-_logger_fin_dispatcher(grn_ctx *ctx, void *user_data)
-{
-    dTHX;
-    dSP;
-    int count;
-    SV *func = ((SV **)user_data)[2];
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    XPUSHs(sv_2mortal(sv_setref_pv(newSV(0), "Groonga::API::ctx", (void*)ctx)));
-    PUTBACK;
-
-    count = call_sv(func, G_VOID|G_DISCARD);
-
-    FREETMPS;
-    LEAVE;
-}
+#include "dispatcher.inc"
 
 MODULE = Groonga::API  PACKAGE = Groonga::API  PREFIX = grn_
 
