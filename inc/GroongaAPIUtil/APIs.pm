@@ -254,12 +254,11 @@ sub extract {
     }
 
     if (@reasons) {
-      push @apis, {todo => \@reasons, type => $type, decl => $decl};
+      push @apis, {todo => \@reasons, type => $type, decl => $decl, name => $name, short_name => $short_name};
     } else {
       $types{$type} = 1;
-      push @apis, {type => $type, decl => $decl};
-      (my $export_name = $name) =~ s/^grn_//;
-      push @to_export, $export_name;
+      push @apis, {type => $type, decl => $decl, name => $name, short_name => $short_name};
+      push @to_export, $short_name;
       $supported++;
     }
   }
