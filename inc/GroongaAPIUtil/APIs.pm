@@ -209,7 +209,7 @@ sub extract {
     $type =~ s/\s+$//;
     $decl =~ s/\s+[A-Z][A-Z_]+\([0-9]+\);$/;/;
     my ($name) = $decl =~ /^([^(]+)/;
-    my ($short_name) = $name =~ /^grn_(\w+)/;
+    my ($short_name) = $name =~ /^_?grn_(\w+)/;
 
     if ($inout{$name}) {
       if (ref $inout{$name}) {
